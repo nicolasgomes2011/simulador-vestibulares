@@ -73,11 +73,7 @@ function validarGrupo() {
 /* ---------- Etapa: dados pessoais ---------- */
 function entrarDados(etapa) {
   const c = estado.candidato;
-  definirValor('nome', c.nome, etapa);
-  definirValor('cpf', c.cpf, etapa);
-  definirValor('data_nascimento', Formatar.data(c.dataNascimento), etapa);
-  definirValor('sexo', c.sexo, etapa);
-  definirValor('nome_mae', c.nomeMae, etapa);
+  if (!lerValor('cpf', etapa)) definirValor('cpf', c.cpf, etapa);
   $('#tabela_enem').innerHTML = tabelaEnemHtml(c.enem, (ano) => EDICAO.prouni.editaisEnem.includes(ano));
   const melhor = melhorEdicao();
   $('#situacao_enem').innerHTML = melhor && melhor.media >= 450
@@ -241,14 +237,15 @@ const TEXTO_ENSINO_MEDIO = {
 };
 
 function paresDados() {
-  const c = estado.candidato;
   const endereco = [lerValor('logradouro'), lerValor('numero'), lerValor('complemento'), lerValor('bairro'),
     `${lerValor('municipio')}/${lerValor('uf')}`, `CEP ${lerValor('cep')}`].filter(Boolean).join(', ');
   return [
-    ['Nome', c.nome],
+    ['Nome', lerValor('nome')],
     ['Nome social', lerValor('usa_nome_social') ? lerValor('nome_social') : ''],
-    ['CPF', c.cpf],
-    ['Data de nascimento', Formatar.data(c.dataNascimento)],
+    ['CPF', lerValor('cpf')],
+    ['Data de nascimento', Formatar.data(lerValor('data_nascimento'))],
+    ['Sexo', lerValor('sexo')],
+    ['Nome da mãe', lerValor('nome_mae')],
     ['Estado civil', lerValor('estado_civil')],
     ['Nacionalidade', lerValor('nacionalidade')],
     ['E-mail', lerValor('email')],
@@ -337,6 +334,10 @@ const preenchimentos = {
   login() { definirValor('login_cpf', gerarCpfFicticio()); },
   dados() {
     const c = CANDIDATO_FICTICIO;
+    definirValor('nome', c.nome);
+    definirValor('data_nascimento', c.dataNascimento);
+    definirValor('sexo', c.sexo);
+    definirValor('nome_mae', c.nomeMae);
     definirValor('estado_civil', 'Solteiro(a)');
     definirValor('nacionalidade', 'Brasileira');
     ['email', 'celular', 'telefone', 'cep', 'uf', 'municipio', 'logradouro', 'numero', 'complemento', 'bairro']
@@ -368,7 +369,7 @@ const assistente = new Assistente({
   indicador: $('#indicador'),
   aoEntrar: {
     dados: entrarDados,
-    grupo: () => grupo.renderizar(),
+    grupo: () => grupo.definirCandidato(candidatoDoFormulario()),
     cursos: entrarCursos,
     ficha: entrarFicha,
     comprovante: entrarComprovante
@@ -376,10 +377,8 @@ const assistente = new Assistente({
   validar: {
     login(etapa) {
       const erros = validarLoginCpf(etapa);
-      if (!erros.length) {
-        estado.candidato = { ...CANDIDATO_FICTICIO, cpf: mascararCpf(lerValor('login_cpf', etapa)) };
-        grupo.definirCandidato(estado.candidato);
-      }
+      // Só as notas do Enem são da "base do sistema"; os dados pessoais vêm do formulário.
+      if (!erros.length) estado.candidato = { cpf: mascararCpf(lerValor('login_cpf', etapa)), enem: CANDIDATO_FICTICIO.enem };
       return erros;
     },
     dados: validarDados,

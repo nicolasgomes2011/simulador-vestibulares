@@ -3,8 +3,8 @@
 Simulador educativo das inscrições no **Sisu**, no **Prouni** e no **Fies**.
 
 Faz parte do projeto de extensão *Apoio à Inscrição em Processos Seletivos para a Educação
-Superior e Bolsas*, do curso de Tecnologia em Análise e Desenvolvimento de Sistemas do
-IFRS Campus Rolante, em parceria com o Rotary Club de Santo Antônio da Patrulha.
+Superior e Bolsas*, do IFRS Campus Rolante, em parceria com o Rotary Club de Santo Antônio
+da Patrulha.
 
 O site é projetado no telão durante as palestras e navegado passo a passo. Depois do
 evento, ele fica disponível como material de apoio.
@@ -35,7 +35,7 @@ e acesse `http://localhost:8080`.
 No topo de cada simulador:
 
 - **Preencher com dados fictícios**: preenche a etapa atual com os dados de exemplo.
-- **Dicas**: mostra ou esconde as explicações em linguagem simples.
+- **Dicas**: mostra ou esconde as explicações em linguagem simples (começam escondidas).
 - **A− / A+**: diminui ou aumenta a fonte para o telão.
 
 ## Etapas de cada simulador

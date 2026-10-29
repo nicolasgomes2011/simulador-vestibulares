@@ -54,7 +54,7 @@ function querFiesSocial() {
 /* ---------- Etapa: dados pessoais ---------- */
 function entrarDados(etapa) {
   const c = estado.candidato;
-  definirValor('cpf', c.cpf, etapa);
+  if (!lerValor('cpf', etapa)) definirValor('cpf', c.cpf, etapa);
   $('#tabela_enem').innerHTML = tabelaEnemHtml(c.enem, (ano) => ano >= EDICAO.fies.enemDesde);
   const melhor = melhorEdicao();
   $('#situacao_enem').innerHTML = melhor
@@ -235,7 +235,7 @@ function paresDados() {
     `${lerValor('municipio')}/${lerValor('uf')}`, `CEP ${lerValor('cep')}`].filter(Boolean).join(', ');
   return [
     ['Nome completo', lerValor('nome')],
-    ['CPF', estado.candidato.cpf],
+    ['CPF', lerValor('cpf')],
     ['Data de nascimento', Formatar.data(lerValor('data_nascimento'))],
     ['Sexo', lerValor('sexo')],
     ['Estado civil', lerValor('estado_civil')],
@@ -376,7 +376,7 @@ const assistente = new Assistente({
   indicador: $('#indicador'),
   aoEntrar: {
     dados: entrarDados,
-    grupo: () => grupo.renderizar(),
+    grupo: () => grupo.definirCandidato(candidatoDoFormulario()),
     modalidade: entrarModalidade,
     cursos: entrarCursos,
     conferencia: entrarConferencia,
@@ -385,10 +385,8 @@ const assistente = new Assistente({
   validar: {
     login(etapa) {
       const erros = validarLoginCpf(etapa);
-      if (!erros.length) {
-        estado.candidato = { ...CANDIDATO_FICTICIO, cpf: mascararCpf(lerValor('login_cpf', etapa)) };
-        grupo.definirCandidato(estado.candidato);
-      }
+      // Só as notas do Enem são da "base do sistema"; os dados pessoais vêm do formulário.
+      if (!erros.length) estado.candidato = { cpf: mascararCpf(lerValor('login_cpf', etapa)), enem: CANDIDATO_FICTICIO.enem };
       return erros;
     },
     dados: validarDados,

@@ -7,7 +7,7 @@
   <meta name="description" content="Simulação educativa da inscrição no Prouni, com dados fictícios.">
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="programa-prouni mostrar-dicas">
+<body class="programa-prouni">
   <div class="aviso-simulacao" role="note">
     <strong>SIMULADOR EDUCATIVO, NÃO É O SITE OFICIAL.</strong>
     Use apenas dados fictícios. Nenhum dado é enviado ou armazenado.
@@ -25,7 +25,7 @@
       <div class="painel-apresentador nao-imprimir" id="painel-apresentador" aria-label="Ferramentas do apresentador">
         <span class="rotulo-painel">Apresentador:</span>
         <button type="button" class="botao-painel" data-painel="preencher">Preencher com dados fictícios</button>
-        <button type="button" class="botao-painel" data-painel="dicas" aria-pressed="true">Dicas</button>
+        <button type="button" class="botao-painel" data-painel="dicas" aria-pressed="false">Dicas</button>
         <button type="button" class="botao-painel" data-painel="menor" aria-label="Diminuir fonte">A−</button>
         <button type="button" class="botao-painel" data-painel="maior" aria-label="Aumentar fonte">A+</button>
       </div>
@@ -94,24 +94,25 @@
         <fieldset>
           <legend>Identificação</legend>
           <div class="campos">
-            <div class="campo c8"><label for="nome">Nome</label><input id="nome" name="nome" type="text" readonly></div>
-            <div class="campo c4"><label for="cpf">CPF</label><input id="cpf" name="cpf" type="text" readonly></div>
-            <div class="campo c4"><label for="data_nascimento">Data de nascimento</label><input id="data_nascimento" name="data_nascimento" type="text" readonly></div>
-            <div class="campo c4"><label for="sexo">Sexo</label><input id="sexo" name="sexo" type="text" readonly></div>
+            <div class="campo c8"><label for="nome" class="obrigatorio">Nome</label><input id="nome" name="nome" type="text" required></div>
+            <div class="campo c4"><label for="cpf" class="obrigatorio">CPF</label><input id="cpf" name="cpf" type="text" inputmode="numeric" data-mascara="cpf" placeholder="000.000.000-00" required minlength="14"></div>
+            <div class="campo c4"><label for="data_nascimento" class="obrigatorio">Data de nascimento</label><input id="data_nascimento" name="data_nascimento" type="date" required></div>
+            <div class="campo c4"><label for="sexo" class="obrigatorio">Sexo</label>
+              <select id="sexo" name="sexo" required><option value="">Selecione</option><option>Feminino</option><option>Masculino</option></select></div>
             <div class="campo c4"><label for="estado_civil" class="obrigatorio">Estado civil</label>
               <select id="estado_civil" name="estado_civil" required>
                 <option value="">Selecione</option>
                 <option>Solteiro(a)</option><option>Casado(a)</option><option>União estável</option>
                 <option>Separado(a)</option><option>Divorciado(a)</option><option>Viúvo(a)</option>
               </select></div>
-            <div class="campo c8"><label for="nome_mae">Nome da mãe</label><input id="nome_mae" name="nome_mae" type="text" readonly></div>
+            <div class="campo c8"><label for="nome_mae" class="obrigatorio">Nome da mãe</label><input id="nome_mae" name="nome_mae" type="text" required></div>
             <div class="campo c4"><label for="nacionalidade" class="obrigatorio">Nacionalidade</label>
               <select id="nacionalidade" name="nacionalidade" required>
                 <option value="">Selecione</option>
                 <option>Brasileira</option><option>Brasileira (naturalizado)</option><option>Estrangeira</option>
               </select></div>
           </div>
-          <p class="dica">Nome, CPF, data de nascimento, sexo e nome da mãe vêm do cadastro do CPF. Se houver erro, a correção é feita na Receita Federal.</p>
+          <p class="dica">No site oficial, nome, CPF, data de nascimento, sexo e nome da mãe já aparecem preenchidos pelo cadastro do CPF. Se houver erro, a correção é feita na Receita Federal.</p>
           <div class="pergunta">
             <label class="opcao"><input type="checkbox" name="usa_nome_social" id="usa_nome_social"> Desejo ser identificado(a) pelo nome social</label>
           </div>
@@ -289,7 +290,7 @@
 
   <footer class="rodape">
     Simulação educativa baseada nas orientações públicas do MEC para o Prouni 2026. Inscrição real: acessounico.mec.gov.br/prouni.
-    Projeto de extensão TADS · IFRS Campus Rolante. Sem vínculo com o MEC.
+    Projeto de extensão · IFRS Campus Rolante. Sem vínculo com o MEC.
   </footer>
 
   <script src="js/dados.js"></script>

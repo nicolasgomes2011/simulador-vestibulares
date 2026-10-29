@@ -105,10 +105,7 @@ function nomeModalidade(codigo, oferta) {
 /* ---------- Etapa: cadastro ---------- */
 function entrarCadastro(etapa) {
   const c = estado.candidato;
-  definirValor('nome', c.nome, etapa);
-  definirValor('cpf', c.cpf, etapa);
-  definirValor('data_nascimento', Formatar.data(c.dataNascimento), etapa);
-  definirValor('nome_mae', c.nomeMae, etapa);
+  if (!lerValor('cpf', etapa)) definirValor('cpf', c.cpf, etapa);
   $('#tabela_enem').innerHTML = tabelaEnemHtml(c.enem, (ano) => EDICAO.sisu.editaisEnem.includes(ano));
   const uf = $('#uf');
   if (uf.options.length === 0) preencherSelect(uf, UFS);
@@ -291,14 +288,14 @@ function validarCursos() {
 
 /* ---------- Conferência e comprovante ---------- */
 function paresCandidato() {
-  const c = estado.candidato;
   const endereco = [lerValor('logradouro'), lerValor('numero'), lerValor('complemento'), lerValor('bairro'),
     `${lerValor('municipio')}/${lerValor('uf')}`, `CEP ${lerValor('cep')}`].filter(Boolean).join(', ');
   return [
-    ['Nome', c.nome],
+    ['Nome', lerValor('nome')],
     ['Nome social', lerValor('usa_nome_social') ? lerValor('nome_social') : ''],
-    ['CPF', c.cpf],
-    ['Data de nascimento', Formatar.data(c.dataNascimento)],
+    ['CPF', lerValor('cpf')],
+    ['Data de nascimento', Formatar.data(lerValor('data_nascimento'))],
+    ['Nome da mãe', lerValor('nome_mae')],
     ['E-mail', lerValor('email')],
     ['Telefone celular', lerValor('celular')],
     ['Telefone fixo', lerValor('telefone')],
@@ -409,6 +406,9 @@ const preenchimentos = {
   login() { definirValor('login_cpf', gerarCpfFicticio()); },
   cadastro() {
     const c = CANDIDATO_FICTICIO;
+    definirValor('nome', c.nome);
+    definirValor('data_nascimento', c.dataNascimento);
+    definirValor('nome_mae', c.nomeMae);
     ['email', 'celular', 'telefone', 'cep', 'uf', 'municipio', 'logradouro', 'numero', 'complemento', 'bairro']
       .forEach((campo) => definirValor(campo, c[campo]));
     definirValor('email_confirmacao', c.email);
@@ -452,7 +452,8 @@ const assistente = new Assistente({
   validar: {
     login(etapa) {
       const erros = validarLoginCpf(etapa);
-      if (!erros.length) estado.candidato = { ...CANDIDATO_FICTICIO, cpf: mascararCpf(lerValor('login_cpf', etapa)) };
+      // Só as notas do Enem são da "base do sistema"; os dados pessoais vêm do formulário.
+      if (!erros.length) estado.candidato = { cpf: mascararCpf(lerValor('login_cpf', etapa)), enem: CANDIDATO_FICTICIO.enem };
       return erros;
     },
     cadastro: validarCadastro,

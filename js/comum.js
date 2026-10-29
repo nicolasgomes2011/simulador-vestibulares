@@ -340,6 +340,11 @@ class Assistente {
   }
 }
 
+// Dados do candidato digitados na etapa de dados pessoais.
+function candidatoDoFormulario() {
+  return { nome: lerValor('nome'), cpf: lerValor('cpf'), dataNascimento: lerValor('data_nascimento') };
+}
+
 /* =========================================================
    Grupo familiar (Prouni e Fies)
    Tabela com o candidato + membros da família e a renda bruta

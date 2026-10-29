@@ -7,7 +7,7 @@
   <meta name="description" content="Simulação educativa da inscrição no Sisu, com dados fictícios.">
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="programa-sisu mostrar-dicas">
+<body class="programa-sisu">
   <div class="aviso-simulacao" role="note">
     <strong>SIMULADOR EDUCATIVO, NÃO É O SITE OFICIAL.</strong>
     Use apenas dados fictícios. Nenhum dado é enviado ou armazenado.
@@ -25,7 +25,7 @@
       <div class="painel-apresentador nao-imprimir" id="painel-apresentador" aria-label="Ferramentas do apresentador">
         <span class="rotulo-painel">Apresentador:</span>
         <button type="button" class="botao-painel" data-painel="preencher">Preencher com dados fictícios</button>
-        <button type="button" class="botao-painel" data-painel="dicas" aria-pressed="true">Dicas</button>
+        <button type="button" class="botao-painel" data-painel="dicas" aria-pressed="false">Dicas</button>
         <button type="button" class="botao-painel" data-painel="menor" aria-label="Diminuir fonte">A−</button>
         <button type="button" class="botao-painel" data-painel="maior" aria-label="Aumentar fonte">A+</button>
       </div>
@@ -96,12 +96,12 @@
         <fieldset>
           <legend>Dados pessoais</legend>
           <div class="campos">
-            <div class="campo c8"><label for="nome">Nome</label><input id="nome" name="nome" type="text" readonly></div>
-            <div class="campo c4"><label for="cpf">CPF</label><input id="cpf" name="cpf" type="text" readonly></div>
-            <div class="campo c4"><label for="data_nascimento">Data de nascimento</label><input id="data_nascimento" name="data_nascimento" type="text" readonly></div>
-            <div class="campo c8"><label for="nome_mae">Nome da mãe</label><input id="nome_mae" name="nome_mae" type="text" readonly></div>
+            <div class="campo c8"><label for="nome" class="obrigatorio">Nome</label><input id="nome" name="nome" type="text" required></div>
+            <div class="campo c4"><label for="cpf" class="obrigatorio">CPF</label><input id="cpf" name="cpf" type="text" inputmode="numeric" data-mascara="cpf" placeholder="000.000.000-00" required minlength="14"></div>
+            <div class="campo c4"><label for="data_nascimento" class="obrigatorio">Data de nascimento</label><input id="data_nascimento" name="data_nascimento" type="date" required></div>
+            <div class="campo c8"><label for="nome_mae" class="obrigatorio">Nome da mãe</label><input id="nome_mae" name="nome_mae" type="text" required></div>
           </div>
-          <p class="dica">Esses dados vêm do cadastro do CPF na Receita Federal e não podem ser alterados aqui. Se algo estiver errado, a correção é feita na Receita.</p>
+          <p class="dica">No site oficial, nome, CPF, data de nascimento e nome da mãe já aparecem preenchidos pelo cadastro do CPF na Receita Federal. Se algo estiver errado, a correção é feita na Receita.</p>
           <div class="pergunta">
             <label class="opcao"><input type="checkbox" name="usa_nome_social" id="usa_nome_social"> Desejo ser identificado(a) pelo nome social</label>
           </div>
@@ -289,7 +289,7 @@
 
   <footer class="rodape">
     Simulação educativa baseada nas orientações públicas do MEC para o Sisu 2026. Inscrição real: acessounico.mec.gov.br/sisu.
-    Projeto de extensão TADS · IFRS Campus Rolante. Sem vínculo com o MEC.
+    Projeto de extensão · IFRS Campus Rolante. Sem vínculo com o MEC.
   </footer>
 
   <script src="js/dados.js"></script>
