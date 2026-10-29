@@ -1,0 +1,13 @@
+# Sistema operacional
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editores e ferramentas locais
+.claude/
+.vscode/
+.idea/
+*.swp
+
+# Dependências (caso o projeto passe a usar alguma)
+node_modules/

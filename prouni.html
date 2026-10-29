@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Simulador Prouni</title>
+  <meta name="description" content="Simulação educativa da inscrição no Prouni, com dados fictícios.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="programa-prouni mostrar-dicas">
+  <div class="aviso-simulacao" role="note">
+    <strong>SIMULADOR EDUCATIVO, NÃO É O SITE OFICIAL.</strong>
+    Use apenas dados fictícios. Nenhum dado é enviado ou armazenado.
+  </div>
+
+  <header class="topo">
+    <div class="topo-conteudo">
+      <a class="marca" href="index.html">
+        <span class="marca-icone" aria-hidden="true">SV</span>
+        <span>
+          <span class="marca-titulo">Simulador de Vestibulares · Prouni</span><br>
+          <span class="marca-sub">Programa Universidade para Todos (simulação)</span>
+        </span>
+      </a>
+      <div class="painel-apresentador nao-imprimir" id="painel-apresentador" aria-label="Ferramentas do apresentador">
+        <span class="rotulo-painel">Apresentador:</span>
+        <button type="button" class="botao-painel" data-painel="preencher">Preencher com dados fictícios</button>
+        <button type="button" class="botao-painel" data-painel="dicas" aria-pressed="true">Dicas</button>
+        <button type="button" class="botao-painel" data-painel="menor" aria-label="Diminuir fonte">A−</button>
+        <button type="button" class="botao-painel" data-painel="maior" aria-label="Aumentar fonte">A+</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <ol class="etapas-indicador" id="indicador" aria-label="Etapas da inscrição"></ol>
+
+    <form id="formulario" class="cartao" autocomplete="off">
+
+      <!-- 1. Página inicial do programa -->
+      <section class="etapa" data-id="inicio" data-titulo="Início" data-botao-proxima="Inscreva-se →">
+        <div class="etapa-cabecalho">
+          <h2>Prouni 2026 · 2º semestre</h2>
+          <p>Bolsas de estudo integrais (100%) e parciais (50%) em instituições privadas de ensino superior.</p>
+        </div>
+        <div class="caixa info">
+          <p><strong>Quem pode se inscrever</strong></p>
+          <ul>
+            <li>Quem concluiu o ensino médio e fez o Enem 2024 e/ou 2025, sem ser treineiro;</li>
+            <li>tirou no mínimo <strong>450 pontos</strong> na média das cinco provas e nota maior que zero na redação;</li>
+            <li>tem renda familiar bruta mensal por pessoa de até <strong>1,5 salário mínimo</strong> (bolsa integral) ou até <strong>3 salários mínimos</strong> (bolsa parcial).</li>
+          </ul>
+        </div>
+        <p class="dica">Se você fez as duas edições, vale a edição em que teve a melhor média. Professores da rede pública podem concorrer a cursos de licenciatura e pedagogia sem limite de renda.</p>
+        <h3>Como funciona a inscrição</h3>
+        <ol>
+          <li>Entrar com a conta gov.br.</li>
+          <li>Informar dados pessoais e de contato.</li>
+          <li>Informar perfil socioeconômico e formação escolar.</li>
+          <li>Informar o grupo familiar e a renda mensal de cada membro.</li>
+          <li>Escolher até duas opções de curso, o tipo de bolsa e a modalidade de concorrência.</li>
+          <li>Conferir a Ficha de Inscrição e confirmar.</li>
+        </ol>
+      </section>
+
+      <!-- 2. Login gov.br (ilustrativo) -->
+      <section class="etapa" data-id="login" data-titulo="Acesso gov.br" data-botao-proxima="Entrar (simulado) →">
+        <div class="etapa-cabecalho">
+          <h2>Acesso com a conta gov.br</h2>
+          <p>No site oficial, o login é feito com CPF e senha da conta gov.br.</p>
+        </div>
+        <div class="login-simulado">
+          <span class="selo-login">LOGIN ILUSTRATIVO</span>
+          <div class="campos">
+            <div class="campo">
+              <label for="login_cpf" class="obrigatorio">CPF</label>
+              <input id="login_cpf" name="login_cpf" type="text" inputmode="numeric" data-mascara="cpf" placeholder="000.000.000-00" required>
+            </div>
+          </div>
+          <p><button type="button" class="botao secundario pequeno" data-gerar-cpf="login_cpf">Gerar CPF fictício</button></p>
+          <div class="caixa alerta">
+            <p>Aqui <strong>não existe campo de senha</strong>, de propósito. Nunca digite sua senha gov.br em sites que não sejam do governo (endereço terminado em <strong>.gov.br</strong>).</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Dados pessoais -->
+      <section class="etapa" data-id="dados" data-titulo="Dados pessoais">
+        <div class="etapa-cabecalho">
+          <h2>Dados pessoais</h2>
+          <p>Confira os dados do seu cadastro e complete as informações pedidas.</p>
+        </div>
+
+        <fieldset>
+          <legend>Identificação</legend>
+          <div class="campos">
+            <div class="campo c8"><label for="nome">Nome</label><input id="nome" name="nome" type="text" readonly></div>
+            <div class="campo c4"><label for="cpf">CPF</label><input id="cpf" name="cpf" type="text" readonly></div>
+            <div class="campo c4"><label for="data_nascimento">Data de nascimento</label><input id="data_nascimento" name="data_nascimento" type="text" readonly></div>
+            <div class="campo c4"><label for="sexo">Sexo</label><input id="sexo" name="sexo" type="text" readonly></div>
+            <div class="campo c4"><label for="estado_civil" class="obrigatorio">Estado civil</label>
+              <select id="estado_civil" name="estado_civil" required>
+                <option value="">Selecione</option>
+                <option>Solteiro(a)</option><option>Casado(a)</option><option>União estável</option>
+                <option>Separado(a)</option><option>Divorciado(a)</option><option>Viúvo(a)</option>
+              </select></div>
+            <div class="campo c8"><label for="nome_mae">Nome da mãe</label><input id="nome_mae" name="nome_mae" type="text" readonly></div>
+            <div class="campo c4"><label for="nacionalidade" class="obrigatorio">Nacionalidade</label>
+              <select id="nacionalidade" name="nacionalidade" required>
+                <option value="">Selecione</option>
+                <option>Brasileira</option><option>Brasileira (naturalizado)</option><option>Estrangeira</option>
+              </select></div>
+          </div>
+          <p class="dica">Nome, CPF, data de nascimento, sexo e nome da mãe vêm do cadastro do CPF. Se houver erro, a correção é feita na Receita Federal.</p>
+          <div class="pergunta">
+            <label class="opcao"><input type="checkbox" name="usa_nome_social" id="usa_nome_social"> Desejo ser identificado(a) pelo nome social</label>
+          </div>
+          <div class="campos oculto" id="bloco_nome_social">
+            <div class="campo"><label for="nome_social" class="obrigatorio">Nome social</label><input id="nome_social" name="nome_social" type="text" required></div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Notas do Enem</legend>
+          <div id="tabela_enem"></div>
+          <div id="situacao_enem"></div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Contato</legend>
+          <div class="campos">
+            <div class="campo c6"><label for="email" class="obrigatorio">E-mail</label><input id="email" name="email" type="email" required></div>
+            <div class="campo c6"><label for="email_confirmacao" class="obrigatorio">Confirme o e-mail</label><input id="email_confirmacao" name="email_confirmacao" type="email" required></div>
+            <div class="campo c6"><label for="celular" class="obrigatorio">Telefone celular</label><input id="celular" name="celular" type="tel" data-mascara="telefone" placeholder="(00) 00000-0000" required minlength="14"></div>
+            <div class="campo c6"><label for="telefone">Telefone fixo</label><input id="telefone" name="telefone" type="tel" data-mascara="telefone" placeholder="(00) 0000-0000"></div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Endereço</legend>
+          <div class="campos">
+            <div class="campo c3"><label for="cep" class="obrigatorio">CEP</label><input id="cep" name="cep" type="text" inputmode="numeric" data-mascara="cep" placeholder="00000-000" required minlength="9"></div>
+            <div class="campo c3"><label for="uf" class="obrigatorio">UF</label><select id="uf" name="uf" required></select></div>
+            <div class="campo c6"><label for="municipio" class="obrigatorio">Município</label><input id="municipio" name="municipio" type="text" required></div>
+            <div class="campo c9"><label for="logradouro" class="obrigatorio">Logradouro</label><input id="logradouro" name="logradouro" type="text" required></div>
+            <div class="campo c3"><label for="numero" class="obrigatorio">Número</label><input id="numero" name="numero" type="text" required></div>
+            <div class="campo c6"><label for="complemento">Complemento</label><input id="complemento" name="complemento" type="text"></div>
+            <div class="campo c6"><label for="bairro" class="obrigatorio">Bairro</label><input id="bairro" name="bairro" type="text" required></div>
+          </div>
+          <p class="dica">Na fase de comprovação, a faculdade pede comprovante de residência. Informe o endereço onde você mora de verdade.</p>
+        </fieldset>
+      </section>
+
+      <!-- 4. Perfil socioeconômico e formação escolar -->
+      <section class="etapa" data-id="perfil" data-titulo="Perfil e formação escolar">
+        <div class="etapa-cabecalho">
+          <h2>Perfil socioeconômico e formação escolar</h2>
+          <p>Essas respostas definem a que tipo de bolsa e modalidade você pode concorrer.</p>
+        </div>
+
+        <div class="pergunta">
+          <span class="rotulo obrigatorio">Raça/cor (autodeclaração)</span>
+          <div class="opcoes em-linha">
+            <label class="opcao"><input type="radio" name="raca_cor" value="Amarela" required> Amarela</label>
+            <label class="opcao"><input type="radio" name="raca_cor" value="Branca"> Branca</label>
+            <label class="opcao"><input type="radio" name="raca_cor" value="Indígena"> Indígena</label>
+            <label class="opcao"><input type="radio" name="raca_cor" value="Parda"> Parda</label>
+            <label class="opcao"><input type="radio" name="raca_cor" value="Preta"> Preta</label>
+          </div>
+          <p class="dica">Quem se autodeclara indígena, preto ou pardo pode concorrer às bolsas reservadas às políticas afirmativas (cotas).</p>
+        </div>
+
+        <div class="pergunta">
+          <span class="rotulo obrigatorio">Você é pessoa com deficiência?</span>
+          <div class="opcoes em-linha">
+            <label class="opcao"><input type="radio" name="pcd" value="sim" required> Sim</label>
+            <label class="opcao"><input type="radio" name="pcd" value="nao"> Não</label>
+          </div>
+        </div>
+        <div class="campos oculto" id="bloco_deficiencia">
+          <div class="campo c6"><label for="tipo_deficiencia" class="obrigatorio">Tipo de deficiência</label>
+            <select id="tipo_deficiencia" name="tipo_deficiencia" required>
+              <option value="">Selecione</option>
+              <option>Física</option><option>Auditiva</option><option>Visual</option>
+              <option>Intelectual</option><option>Múltipla</option><option>Transtorno do espectro autista</option>
+            </select></div>
+        </div>
+
+        <div class="pergunta">
+          <span class="rotulo obrigatorio">Você é professor(a) da rede pública de ensino, no efetivo exercício do magistério da educação básica, integrante do quadro de pessoal permanente da instituição?</span>
+          <div class="opcoes em-linha">
+            <label class="opcao"><input type="radio" name="professor" value="sim" required> Sim</label>
+            <label class="opcao"><input type="radio" name="professor" value="nao"> Não</label>
+          </div>
+        </div>
+
+        <div class="pergunta">
+          <span class="rotulo obrigatorio">Como você cursou o ensino médio?</span>
+          <div class="opcoes">
+            <label class="opcao"><input type="radio" name="ensino_medio" value="publica" required> Integralmente em escola da rede pública</label>
+            <label class="opcao"><input type="radio" name="ensino_medio" value="privada_bolsa_integral"> Integralmente em instituição privada, na condição de bolsista integral da própria escola</label>
+            <label class="opcao"><input type="radio" name="ensino_medio" value="parcial_bolsa_integral"> Parcialmente em escola da rede pública e parcialmente em instituição privada, na condição de bolsista integral</label>
+            <label class="opcao"><input type="radio" name="ensino_medio" value="parcial_sem_bolsa"> Parcialmente em escola da rede pública e parcialmente em instituição privada, na condição de bolsista parcial ou sem bolsa</label>
+            <label class="opcao"><input type="radio" name="ensino_medio" value="privada_sem_bolsa"> Integralmente em instituição privada, na condição de bolsista parcial ou sem bolsa</label>
+          </div>
+          <p class="dica">Desde 2022 (Lei nº 14.350), quem estudou em escola particular sem bolsa também pode participar, mas só concorre às bolsas que sobrarem depois dos candidatos de escola pública e de bolsistas integrais.</p>
+        </div>
+
+        <div class="campos">
+          <div class="campo c4"><label for="ano_conclusao" class="obrigatorio">Ano de conclusão do ensino médio</label>
+            <input id="ano_conclusao" name="ano_conclusao" type="number" min="1950" max="2026" required></div>
+        </div>
+      </section>
+
+      <!-- 5. Grupo familiar -->
+      <section class="etapa" data-id="grupo" data-titulo="Grupo familiar">
+        <div class="etapa-cabecalho">
+          <h2>Grupo familiar e renda</h2>
+          <p>Informe todas as pessoas que moram com você e a renda bruta mensal de cada uma.</p>
+        </div>
+        <div id="tabela_grupo"></div>
+        <div class="renda-resultado" id="resultado_renda" aria-live="polite"></div>
+        <p class="dica">Grupo familiar é quem mora na mesma casa e usa a mesma renda. Renda bruta é o valor antes dos descontos. Quem não tem renda informa 0,00 e, se for pré-selecionado(a), assina uma declaração de ausência de renda.</p>
+        <p class="dica">Quem for pré-selecionado(a) precisa comprovar tudo na faculdade: documentos de identidade de todos, comprovante de residência e de rendimentos. Informação falsa faz perder a bolsa.</p>
+      </section>
+
+      <!-- 6. Escolha de cursos -->
+      <section class="etapa" data-id="cursos" data-titulo="Opções de curso">
+        <div class="etapa-cabecalho">
+          <h2>Escolha de cursos</h2>
+          <p>Escolha até duas opções em ordem de preferência. Para cada uma, defina o tipo de bolsa e a modalidade de concorrência.</p>
+        </div>
+        <div id="opcoes_escolhidas"></div>
+
+        <h3>Buscar cursos</h3>
+        <p class="ajuda">Instituições, cursos, bolsas e notas de corte desta lista são fictícios.</p>
+        <div class="filtros">
+          <div class="campo"><label for="f_curso">Curso</label><input id="f_curso" type="search" placeholder="Ex.: Enfermagem"></div>
+          <div class="campo"><label for="f_ies">Instituição</label><select id="f_ies"></select></div>
+          <div class="campo"><label for="f_municipio">Município</label><select id="f_municipio"></select></div>
+        </div>
+        <div class="lista-ofertas" id="lista_ofertas" aria-live="polite"></div>
+      </section>
+
+      <!-- 7. Ficha de inscrição -->
+      <section class="etapa" data-id="ficha" data-titulo="Ficha de inscrição" data-botao-proxima="Confirmar inscrição ✓">
+        <div class="etapa-cabecalho">
+          <h2>Ficha de inscrição</h2>
+          <p>Confira todas as informações antes de confirmar.</p>
+        </div>
+        <div class="resumo" id="ficha"></div>
+        <div class="pergunta">
+          <label class="opcao"><input type="checkbox" name="declaracao_veracidade" data-nome="Declaração" required>
+            <span class="rotulo obrigatorio">Declaro, sob as penas da lei, que as informações prestadas são verdadeiras e que conheço as regras do edital. Estou ciente de que deverei comprová-las na instituição de ensino, se for pré-selecionado(a).</span></label>
+        </div>
+      </section>
+
+      <!-- 8. Comprovante -->
+      <section class="etapa" data-id="comprovante" data-titulo="Comprovante" data-sem-navegacao>
+        <div class="etapa-cabecalho">
+          <h2>Inscrição confirmada</h2>
+          <p>Guarde o comprovante. Acompanhe os resultados das chamadas no portal.</p>
+        </div>
+        <div class="comprovante resumo" id="comprovante"></div>
+
+        <div class="navegacao-etapa nao-imprimir">
+          <button type="button" class="botao secundario" id="btn_alterar">Alterar inscrição</button>
+          <button type="button" class="botao" onclick="window.print()">Imprimir comprovante</button>
+        </div>
+
+        <div class="nao-imprimir">
+          <h3>Próximas etapas</h3>
+          <ol>
+            <li><strong>1ª chamada:</strong> o resultado mostra se você foi pré-selecionado(a).</li>
+            <li><strong>Comprovação:</strong> o pré-selecionado(a) leva os documentos à faculdade no prazo.</li>
+            <li><strong>2ª chamada:</strong> para quem não foi pré-selecionado(a) na 1ª.</li>
+            <li><strong>Lista de espera:</strong> é preciso manifestar interesse no prazo do edital.</li>
+          </ol>
+          <p><button type="button" class="botao secundario" id="btn_resultado">Simular resultado da 1ª chamada</button></p>
+          <div id="resultado" aria-live="polite"></div>
+          <div class="navegacao-etapa">
+            <a class="botao secundario" href="index.html">Voltar ao início</a>
+            <button type="button" class="botao perigo" onclick="location.reload()">Nova simulação (apaga tudo)</button>
+          </div>
+        </div>
+      </section>
+    </form>
+  </main>
+
+  <footer class="rodape">
+    Simulação educativa baseada nas orientações públicas do MEC para o Prouni 2026. Inscrição real: acessounico.mec.gov.br/prouni.
+    Projeto de extensão TADS · IFRS Campus Rolante. Sem vínculo com o MEC.
+  </footer>
+
+  <script src="js/dados.js"></script>
+  <script src="js/comum.js"></script>
+  <script src="js/prouni.js"></script>
+</body>
+</html>

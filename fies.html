@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Simulador Fies</title>
+  <meta name="description" content="Simulação educativa da inscrição no Fies, com dados fictícios.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="programa-fies mostrar-dicas">
+  <div class="aviso-simulacao" role="note">
+    <strong>SIMULADOR EDUCATIVO, NÃO É O SITE OFICIAL.</strong>
+    Use apenas dados fictícios. Nenhum dado é enviado ou armazenado.
+  </div>
+
+  <header class="topo">
+    <div class="topo-conteudo">
+      <a class="marca" href="index.html">
+        <span class="marca-icone" aria-hidden="true">SV</span>
+        <span>
+          <span class="marca-titulo">Simulador de Vestibulares · Fies</span><br>
+          <span class="marca-sub">Fundo de Financiamento Estudantil (simulação)</span>
+        </span>
+      </a>
+      <div class="painel-apresentador nao-imprimir" id="painel-apresentador" aria-label="Ferramentas do apresentador">
+        <span class="rotulo-painel">Apresentador:</span>
+        <button type="button" class="botao-painel" data-painel="preencher">Preencher com dados fictícios</button>
+        <button type="button" class="botao-painel" data-painel="dicas" aria-pressed="true">Dicas</button>
+        <button type="button" class="botao-painel" data-painel="menor" aria-label="Diminuir fonte">A−</button>
+        <button type="button" class="botao-painel" data-painel="maior" aria-label="Aumentar fonte">A+</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <ol class="etapas-indicador" id="indicador" aria-label="Etapas da inscrição"></ol>
+
+    <form id="formulario" class="cartao" autocomplete="off">
+
+      <!-- 1. Página inicial do programa -->
+      <section class="etapa" data-id="inicio" data-titulo="Início" data-botao-proxima="Inscreva-se →">
+        <div class="etapa-cabecalho">
+          <h2>Fies 2026 · 2º semestre</h2>
+          <p>Financiamento da graduação em instituições privadas que aderiram ao programa e têm avaliação positiva no MEC.</p>
+        </div>
+        <div class="caixa info">
+          <p><strong>Quem pode se inscrever</strong></p>
+          <ul>
+            <li>Quem fez o Enem em qualquer edição a partir de 2010;</li>
+            <li>tirou média igual ou superior a <strong>450 pontos</strong> nas provas objetivas e nota maior que zero na redação;</li>
+            <li>tem renda familiar bruta mensal por pessoa de até <strong>3 salários mínimos</strong>.</li>
+          </ul>
+        </div>
+        <div class="caixa alerta">
+          <p><strong>Fies Social:</strong> metade das vagas é reservada a quem está inscrito no CadÚnico e tem renda por pessoa de até <strong>meio salário mínimo</strong>. Nesse caso, o financiamento pode cobrir até <strong>100%</strong> da mensalidade.</p>
+        </div>
+        <p class="dica">Fies é um empréstimo: o valor financiado é pago depois de formado(a). Ele é diferente do Prouni, que é uma bolsa e não precisa ser devolvida.</p>
+        <h3>Como funciona a inscrição</h3>
+        <ol>
+          <li>Clicar em inscrição no portal e entrar no Fies Seleção com a conta gov.br.</li>
+          <li>Preencher dados pessoais e familiares, incluindo a renda mensal bruta.</li>
+          <li>Informar cor, etnia e formação do ensino médio.</li>
+          <li>Indicar se quer concorrer ao Fies Social e a alguma modalidade de cotas.</li>
+          <li>Escolher até três opções de curso, em ordem de preferência.</li>
+          <li>Conferir e concluir a inscrição.</li>
+        </ol>
+      </section>
+
+      <!-- 2. Login gov.br (ilustrativo) -->
+      <section class="etapa" data-id="login" data-titulo="Acesso gov.br" data-botao-proxima="Entrar (simulado) →">
+        <div class="etapa-cabecalho">
+          <h2>Fies Seleção · acesso com a conta gov.br</h2>
+          <p>No site oficial, o login é feito com CPF e senha da conta gov.br.</p>
+        </div>
+        <div class="login-simulado">
+          <span class="selo-login">LOGIN ILUSTRATIVO</span>
+          <div class="campos">
+            <div class="campo">
+              <label for="login_cpf" class="obrigatorio">CPF</label>
+              <input id="login_cpf" name="login_cpf" type="text" inputmode="numeric" data-mascara="cpf" placeholder="000.000.000-00" required>
+            </div>
+          </div>
+          <p><button type="button" class="botao secundario pequeno" data-gerar-cpf="login_cpf">Gerar CPF fictício</button></p>
+          <div class="caixa alerta">
+            <p>Aqui <strong>não existe campo de senha</strong>, de propósito. Nunca digite sua senha gov.br em sites que não sejam do governo (endereço terminado em <strong>.gov.br</strong>).</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Dados pessoais -->
+      <section class="etapa" data-id="dados" data-titulo="Dados pessoais">
+        <div class="etapa-cabecalho">
+          <h2>Dados pessoais</h2>
+          <p>Preencha seus dados pessoais e de contato.</p>
+        </div>
+
+        <fieldset>
+          <legend>Identificação</legend>
+          <div class="campos">
+            <div class="campo c8"><label for="nome" class="obrigatorio">Nome completo</label><input id="nome" name="nome" type="text" required></div>
+            <div class="campo c4"><label for="cpf">CPF</label><input id="cpf" name="cpf" type="text" readonly></div>
+            <div class="campo c4"><label for="data_nascimento" class="obrigatorio">Data de nascimento</label><input id="data_nascimento" name="data_nascimento" type="date" required></div>
+            <div class="campo c4"><label for="sexo" class="obrigatorio">Sexo</label>
+              <select id="sexo" name="sexo" required><option value="">Selecione</option><option>Feminino</option><option>Masculino</option></select></div>
+            <div class="campo c4"><label for="estado_civil" class="obrigatorio">Estado civil</label>
+              <select id="estado_civil" name="estado_civil" required>
+                <option value="">Selecione</option>
+                <option>Solteiro(a)</option><option>Casado(a)</option><option>União estável</option>
+                <option>Separado(a)</option><option>Divorciado(a)</option><option>Viúvo(a)</option>
+              </select></div>
+          </div>
+          <p class="dica">Os dados precisam ser iguais aos do documento de identidade: eles serão conferidos pela faculdade e pelo banco na hora do contrato.</p>
+        </fieldset>
+
+        <fieldset>
+          <legend>Notas do Enem</legend>
+          <div id="tabela_enem"></div>
+          <div id="situacao_enem"></div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Contato</legend>
+          <div class="campos">
+            <div class="campo c6"><label for="email" class="obrigatorio">E-mail</label><input id="email" name="email" type="email" required></div>
+            <div class="campo c6"><label for="email_confirmacao" class="obrigatorio">Confirme o e-mail</label><input id="email_confirmacao" name="email_confirmacao" type="email" required></div>
+            <div class="campo c6"><label for="celular" class="obrigatorio">Telefone celular</label><input id="celular" name="celular" type="tel" data-mascara="telefone" placeholder="(00) 00000-0000" required minlength="14"></div>
+            <div class="campo c6"><label for="telefone">Telefone fixo</label><input id="telefone" name="telefone" type="tel" data-mascara="telefone" placeholder="(00) 0000-0000"></div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Endereço</legend>
+          <div class="campos">
+            <div class="campo c3"><label for="cep" class="obrigatorio">CEP</label><input id="cep" name="cep" type="text" inputmode="numeric" data-mascara="cep" placeholder="00000-000" required minlength="9"></div>
+            <div class="campo c3"><label for="uf" class="obrigatorio">UF</label><select id="uf" name="uf" required></select></div>
+            <div class="campo c6"><label for="municipio" class="obrigatorio">Município</label><input id="municipio" name="municipio" type="text" required></div>
+            <div class="campo c9"><label for="logradouro" class="obrigatorio">Logradouro</label><input id="logradouro" name="logradouro" type="text" required></div>
+            <div class="campo c3"><label for="numero" class="obrigatorio">Número</label><input id="numero" name="numero" type="text" required></div>
+            <div class="campo c6"><label for="complemento">Complemento</label><input id="complemento" name="complemento" type="text"></div>
+            <div class="campo c6"><label for="bairro" class="obrigatorio">Bairro</label><input id="bairro" name="bairro" type="text" required></div>
+          </div>
+        </fieldset>
+      </section>
+
+      <!-- 4. Cor, etnia e ensino médio -->
+      <section class="etapa" data-id="perfil" data-titulo="Cor, etnia e ensino médio">
+        <div class="etapa-cabecalho">
+          <h2>Cor, etnia e formação do ensino médio</h2>
+          <p>Essas respostas definem as modalidades de cotas que você pode escolher.</p>
+        </div>
+
+        <div class="pergunta">
+          <span class="rotulo obrigatorio">Cor/raça (autodeclaração)</span>
+          <div class="opcoes em-linha">
+            <label class="opcao"><input type="radio" name="raca_cor" value="Amarela" required> Amarela</label>
+            <label class="opcao"><input type="radio" name="raca_cor" value="Branca"> Branca</label>
+            <label class="opcao"><input type="radio" name="raca_cor" value="Indígena"> Indígena</label>
+            <label class="opcao"><input type="radio" name="raca_cor" value="Parda"> Parda</label>
+            <label class="opcao"><input type="radio" name="raca_cor" value="Preta"> Preta</label>
+          </div>
+        </div>
+        <div class="campos oculto" id="bloco_etnia">
+          <div class="campo c6"><label for="etnia" class="obrigatorio">Etnia / povo indígena</label><input id="etnia" name="etnia" type="text" required></div>
+        </div>
+
+        <div class="pergunta">
+          <span class="rotulo obrigatorio">Você é quilombola?</span>
+          <div class="opcoes em-linha">
+            <label class="opcao"><input type="radio" name="quilombola" value="sim" required> Sim</label>
+            <label class="opcao"><input type="radio" name="quilombola" value="nao"> Não</label>
+          </div>
+        </div>
+
+        <div class="pergunta">
+          <span class="rotulo obrigatorio">Você é pessoa com deficiência?</span>
+          <div class="opcoes em-linha">
+            <label class="opcao"><input type="radio" name="pcd" value="sim" required> Sim</label>
+            <label class="opcao"><input type="radio" name="pcd" value="nao"> Não</label>
+          </div>
+          <p class="dica">Quem for pré-selecionado(a) em vaga para pessoa com deficiência apresenta laudo médico com a espécie e o grau da deficiência e o código da CID.</p>
+        </div>
+        <div class="campos oculto" id="bloco_deficiencia">
+          <div class="campo c6"><label for="tipo_deficiencia" class="obrigatorio">Tipo de deficiência</label>
+            <select id="tipo_deficiencia" name="tipo_deficiencia" required>
+              <option value="">Selecione</option>
+              <option>Física</option><option>Auditiva</option><option>Visual</option>
+              <option>Intelectual</option><option>Múltipla</option><option>Transtorno do espectro autista</option>
+            </select></div>
+        </div>
+
+        <fieldset>
+          <legend>Formação do ensino médio</legend>
+          <div class="pergunta">
+            <span class="rotulo obrigatorio">Tipo de escola em que cursou o ensino médio</span>
+            <div class="opcoes">
+              <label class="opcao"><input type="radio" name="ensino_medio" value="publica" required> Integralmente em escola pública</label>
+              <label class="opcao"><input type="radio" name="ensino_medio" value="privada_bolsa_integral"> Integralmente em escola privada, com bolsa integral</label>
+              <label class="opcao"><input type="radio" name="ensino_medio" value="mista"> Parte em escola pública e parte em escola privada</label>
+              <label class="opcao"><input type="radio" name="ensino_medio" value="privada"> Integralmente em escola privada, sem bolsa ou com bolsa parcial</label>
+            </div>
+          </div>
+          <div class="campos">
+            <div class="campo c4"><label for="ano_conclusao" class="obrigatorio">Ano de conclusão do ensino médio</label>
+              <input id="ano_conclusao" name="ano_conclusao" type="number" min="1950" max="2026" required></div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Ensino superior</legend>
+          <div class="pergunta">
+            <span class="rotulo obrigatorio">Você já concluiu algum curso superior?</span>
+            <div class="opcoes em-linha">
+              <label class="opcao"><input type="radio" name="superior_concluido" value="sim" required> Sim</label>
+              <label class="opcao"><input type="radio" name="superior_concluido" value="nao"> Não</label>
+            </div>
+          </div>
+          <div class="pergunta">
+            <span class="rotulo obrigatorio">Você já teve financiamento pelo Fies?</span>
+            <div class="opcoes em-linha">
+              <label class="opcao"><input type="radio" name="ja_teve_fies" value="sim" required> Sim</label>
+              <label class="opcao"><input type="radio" name="ja_teve_fies" value="nao"> Não</label>
+            </div>
+          </div>
+          <p class="dica">Quem nunca fez faculdade e nunca teve Fies tem prioridade na classificação.</p>
+        </fieldset>
+      </section>
+
+      <!-- 5. Grupo familiar -->
+      <section class="etapa" data-id="grupo" data-titulo="Grupo familiar e renda">
+        <div class="etapa-cabecalho">
+          <h2>Grupo familiar e renda mensal bruta</h2>
+          <p>Informe todas as pessoas que moram com você e a renda bruta mensal de cada uma.</p>
+        </div>
+        <div id="tabela_grupo"></div>
+        <div class="renda-resultado" id="resultado_renda" aria-live="polite"></div>
+        <p class="dica">Erros no grupo familiar ou na renda são uma das causas mais comuns de perder a vaga: a faculdade confere tudo na validação.</p>
+      </section>
+
+      <!-- 6. Fies Social e cotas -->
+      <section class="etapa" data-id="modalidade" data-titulo="Fies Social e cotas">
+        <div class="etapa-cabecalho">
+          <h2>Fies Social e modalidade de concorrência</h2>
+          <p>Indique se você está no CadÚnico, se quer concorrer ao Fies Social e a alguma modalidade de cotas.</p>
+        </div>
+
+        <div class="pergunta">
+          <span class="rotulo obrigatorio">Você está inscrito(a) no Cadastro Único para Programas Sociais do Governo Federal (CadÚnico)?</span>
+          <div class="opcoes em-linha">
+            <label class="opcao"><input type="radio" name="cadunico" value="sim" required> Sim</label>
+            <label class="opcao"><input type="radio" name="cadunico" value="nao"> Não</label>
+          </div>
+        </div>
+        <div class="campos oculto" id="bloco_nis">
+          <div class="campo c6"><label for="nis" class="obrigatorio">Número de Identificação Social (NIS)</label>
+            <input id="nis" name="nis" type="text" inputmode="numeric" data-mascara="numero" maxlength="11" minlength="11" required placeholder="11 dígitos">
+            <span class="ajuda">Na simulação, use um número inventado de 11 dígitos.</span></div>
+        </div>
+
+        <div class="pergunta">
+          <span class="rotulo obrigatorio">Deseja concorrer às vagas do Fies Social?</span>
+          <div id="aviso_fies_social"></div>
+          <div class="opcoes em-linha">
+            <label class="opcao"><input type="radio" name="fies_social" value="sim" required> Sim</label>
+            <label class="opcao"><input type="radio" name="fies_social" value="nao"> Não</label>
+          </div>
+          <p class="dica">O Fies Social exige inscrição ativa no CadÚnico e renda por pessoa de até meio salário mínimo. Quem é pré-selecionado(a) nele pode financiar até 100% da mensalidade.</p>
+        </div>
+
+        <div class="pergunta">
+          <span class="rotulo obrigatorio">Deseja concorrer a alguma modalidade de cotas?</span>
+          <div class="opcoes" id="lista_cotas"></div>
+          <p class="dica">As cotas existem tanto nas vagas do Fies quanto nas do Fies Social.</p>
+        </div>
+      </section>
+
+      <!-- 7. Escolha de cursos -->
+      <section class="etapa" data-id="cursos" data-titulo="Opções de curso">
+        <div class="etapa-cabecalho">
+          <h2>Escolha de cursos</h2>
+          <p>Escolha até três opções (curso, turno, local de oferta e instituição), em ordem de preferência.</p>
+        </div>
+        <div id="opcoes_escolhidas"></div>
+        <p class="dica">Coloque em 1º lugar o curso que você mais quer e deixe por último uma opção mais garantida. Você só é pré-selecionado(a) em uma das opções.</p>
+
+        <h3>Buscar cursos</h3>
+        <p class="ajuda">Instituições, cursos, mensalidades e vagas desta lista são fictícios.</p>
+        <div class="filtros">
+          <div class="campo"><label for="f_curso">Curso</label><input id="f_curso" type="search" placeholder="Ex.: Direito"></div>
+          <div class="campo"><label for="f_ies">Instituição</label><select id="f_ies"></select></div>
+          <div class="campo"><label for="f_municipio">Município</label><select id="f_municipio"></select></div>
+          <div class="campo"><label for="f_turno">Turno</label><select id="f_turno"></select></div>
+        </div>
+        <div class="lista-ofertas" id="lista_ofertas" aria-live="polite"></div>
+      </section>
+
+      <!-- 8. Conferência -->
+      <section class="etapa" data-id="conferencia" data-titulo="Conferência" data-botao-proxima="Concluir inscrição ✓">
+        <div class="etapa-cabecalho">
+          <h2>Confira sua inscrição</h2>
+          <p>Revise todas as informações antes de concluir.</p>
+        </div>
+        <div class="resumo" id="resumo_conferencia"></div>
+        <div class="pergunta">
+          <label class="opcao"><input type="checkbox" name="declaracao_veracidade" data-nome="Declaração" required>
+            <span class="rotulo obrigatorio">Declaro que as informações prestadas são verdadeiras e que conheço as regras do edital do Fies. Estou ciente de que deverei comprová-las na instituição de ensino e no banco, se for pré-selecionado(a).</span></label>
+        </div>
+      </section>
+
+      <!-- 9. Comprovante -->
+      <section class="etapa" data-id="comprovante" data-titulo="Comprovante" data-sem-navegacao>
+        <div class="etapa-cabecalho">
+          <h2>Inscrição concluída</h2>
+          <p>Guarde o comprovante e acompanhe o resultado da chamada única.</p>
+        </div>
+        <div class="comprovante resumo" id="comprovante"></div>
+
+        <div class="navegacao-etapa nao-imprimir">
+          <button type="button" class="botao secundario" id="btn_alterar">Alterar inscrição</button>
+          <button type="button" class="botao" onclick="window.print()">Imprimir comprovante</button>
+        </div>
+
+        <div class="nao-imprimir">
+          <h3>Próximas etapas</h3>
+          <ol>
+            <li><strong>Resultado da chamada única:</strong> mostra se você foi pré-selecionado(a).</li>
+            <li><strong>Complementação da inscrição:</strong> o pré-selecionado(a) completa os dados no Fies Seleção.</li>
+            <li><strong>Validação na faculdade:</strong> a Comissão Permanente de Supervisão e Acompanhamento (CPSA) confere as informações e documentos.</li>
+            <li><strong>Banco:</strong> o estudante comprova que está apto e assina o contrato de financiamento.</li>
+            <li><strong>Lista de espera:</strong> quem não foi pré-selecionado(a) entra automaticamente, pela ordem de classificação.</li>
+          </ol>
+          <p><button type="button" class="botao secundario" id="btn_resultado">Simular resultado da chamada única</button></p>
+          <div id="resultado" aria-live="polite"></div>
+          <div class="navegacao-etapa">
+            <a class="botao secundario" href="index.html">Voltar ao início</a>
+            <button type="button" class="botao perigo" onclick="location.reload()">Nova simulação (apaga tudo)</button>
+          </div>
+        </div>
+      </section>
+    </form>
+  </main>
+
+  <footer class="rodape">
+    Simulação educativa baseada nas orientações públicas do MEC para o Fies 2026. Inscrição real: acessounico.mec.gov.br/fies.
+    Projeto de extensão TADS · IFRS Campus Rolante. Sem vínculo com o MEC.
+  </footer>
+
+  <script src="js/dados.js"></script>
+  <script src="js/comum.js"></script>
+  <script src="js/fies.js"></script>
+</body>
+</html>

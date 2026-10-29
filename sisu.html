@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Simulador Sisu</title>
+  <meta name="description" content="Simulação educativa da inscrição no Sisu, com dados fictícios.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="programa-sisu mostrar-dicas">
+  <div class="aviso-simulacao" role="note">
+    <strong>SIMULADOR EDUCATIVO, NÃO É O SITE OFICIAL.</strong>
+    Use apenas dados fictícios. Nenhum dado é enviado ou armazenado.
+  </div>
+
+  <header class="topo">
+    <div class="topo-conteudo">
+      <a class="marca" href="index.html">
+        <span class="marca-icone" aria-hidden="true">SV</span>
+        <span>
+          <span class="marca-titulo">Simulador de Vestibulares · Sisu</span><br>
+          <span class="marca-sub">Sistema de Seleção Unificada (simulação)</span>
+        </span>
+      </a>
+      <div class="painel-apresentador nao-imprimir" id="painel-apresentador" aria-label="Ferramentas do apresentador">
+        <span class="rotulo-painel">Apresentador:</span>
+        <button type="button" class="botao-painel" data-painel="preencher">Preencher com dados fictícios</button>
+        <button type="button" class="botao-painel" data-painel="dicas" aria-pressed="true">Dicas</button>
+        <button type="button" class="botao-painel" data-painel="menor" aria-label="Diminuir fonte">A−</button>
+        <button type="button" class="botao-painel" data-painel="maior" aria-label="Aumentar fonte">A+</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <ol class="etapas-indicador" id="indicador" aria-label="Etapas da inscrição"></ol>
+
+    <form id="formulario" class="cartao" autocomplete="off">
+
+      <!-- 1. Página inicial do programa -->
+      <section class="etapa" data-id="inicio" data-titulo="Início" data-botao-proxima="Inscreva-se →">
+        <div class="etapa-cabecalho">
+          <h2>Sisu 2026</h2>
+          <p>Sistema de Seleção Unificada: vagas gratuitas em instituições públicas de ensino superior.</p>
+        </div>
+        <div class="caixa info">
+          <p><strong>Quem pode se inscrever</strong></p>
+          <ul>
+            <li>Quem fez pelo menos uma das três últimas edições do Enem (2023, 2024 ou 2025);</li>
+            <li>tirou nota maior que zero na redação;</li>
+            <li>e não participou como treineiro.</li>
+          </ul>
+        </div>
+        <p class="dica">O sistema escolhe sozinho, para cada curso, a edição do Enem em que você teve a melhor média com os pesos daquele curso. Você não escolhe a edição.</p>
+        <h3>Como funciona a inscrição</h3>
+        <ol>
+          <li>Entrar com a conta gov.br.</li>
+          <li>Conferir e completar os dados de cadastro (contato, nome social e endereço).</li>
+          <li>Responder ao questionário socioeconômico.</li>
+          <li>Confirmar as modalidades de concorrência (ampla concorrência e cotas).</li>
+          <li>Escolher até duas opções de curso, em ordem de preferência.</li>
+          <li>Confirmar e imprimir o comprovante.</li>
+        </ol>
+        <p class="dica">A inscrição é gratuita. Até o fim do prazo, dá para mudar as opções quantas vezes quiser: vale a última inscrição confirmada.</p>
+      </section>
+
+      <!-- 2. Login gov.br (ilustrativo) -->
+      <section class="etapa" data-id="login" data-titulo="Acesso gov.br" data-botao-proxima="Entrar (simulado) →">
+        <div class="etapa-cabecalho">
+          <h2>Acesso com a conta gov.br</h2>
+          <p>No site oficial, o login é feito com CPF e senha da conta gov.br.</p>
+        </div>
+        <div class="login-simulado">
+          <span class="selo-login">LOGIN ILUSTRATIVO</span>
+          <div class="campos">
+            <div class="campo">
+              <label for="login_cpf" class="obrigatorio">CPF</label>
+              <input id="login_cpf" name="login_cpf" type="text" inputmode="numeric" data-mascara="cpf" placeholder="000.000.000-00" required>
+            </div>
+          </div>
+          <p><button type="button" class="botao secundario pequeno" data-gerar-cpf="login_cpf">Gerar CPF fictício</button></p>
+          <div class="caixa alerta">
+            <p>Aqui <strong>não existe campo de senha</strong>, de propósito. Nunca digite sua senha gov.br em sites que não sejam do governo (endereço terminado em <strong>.gov.br</strong>).</p>
+          </div>
+          <p class="dica">Quem fez o Enem já tem conta gov.br. Se esqueceu a senha, recupere pelo próprio gov.br antes do período de inscrição.</p>
+        </div>
+      </section>
+
+      <!-- 3. Dados de cadastro -->
+      <section class="etapa" data-id="cadastro" data-titulo="Dados de cadastro">
+        <div class="etapa-cabecalho">
+          <h2>Informações do candidato</h2>
+          <p>Confira seus dados e complete as informações de contato e endereço.</p>
+        </div>
+
+        <fieldset>
+          <legend>Dados pessoais</legend>
+          <div class="campos">
+            <div class="campo c8"><label for="nome">Nome</label><input id="nome" name="nome" type="text" readonly></div>
+            <div class="campo c4"><label for="cpf">CPF</label><input id="cpf" name="cpf" type="text" readonly></div>
+            <div class="campo c4"><label for="data_nascimento">Data de nascimento</label><input id="data_nascimento" name="data_nascimento" type="text" readonly></div>
+            <div class="campo c8"><label for="nome_mae">Nome da mãe</label><input id="nome_mae" name="nome_mae" type="text" readonly></div>
+          </div>
+          <p class="dica">Esses dados vêm do cadastro do CPF na Receita Federal e não podem ser alterados aqui. Se algo estiver errado, a correção é feita na Receita.</p>
+          <div class="pergunta">
+            <label class="opcao"><input type="checkbox" name="usa_nome_social" id="usa_nome_social"> Desejo ser identificado(a) pelo nome social</label>
+          </div>
+          <div class="campos oculto" id="bloco_nome_social">
+            <div class="campo"><label for="nome_social" class="obrigatorio">Nome social</label><input id="nome_social" name="nome_social" type="text" required></div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Participações no Enem</legend>
+          <div id="tabela_enem"></div>
+          <p class="dica">Edições riscadas não contam: treineiro ou redação zerada não servem para o Sisu.</p>
+        </fieldset>
+
+        <fieldset>
+          <legend>Contato</legend>
+          <div class="campos">
+            <div class="campo c6"><label for="email" class="obrigatorio">E-mail</label><input id="email" name="email" type="email" required></div>
+            <div class="campo c6"><label for="email_confirmacao" class="obrigatorio">Confirme o e-mail</label><input id="email_confirmacao" name="email_confirmacao" type="email" required></div>
+            <div class="campo c6"><label for="celular" class="obrigatorio">Telefone celular</label><input id="celular" name="celular" type="tel" data-mascara="telefone" placeholder="(00) 00000-0000" required minlength="14"></div>
+            <div class="campo c6"><label for="telefone">Telefone fixo</label><input id="telefone" name="telefone" type="tel" data-mascara="telefone" placeholder="(00) 0000-0000"></div>
+          </div>
+          <p class="dica">Use um e-mail e um celular que você acessa sempre: a instituição usa esses contatos se você for selecionado(a).</p>
+        </fieldset>
+
+        <fieldset>
+          <legend>Endereço</legend>
+          <div class="campos">
+            <div class="campo c3"><label for="cep" class="obrigatorio">CEP</label><input id="cep" name="cep" type="text" inputmode="numeric" data-mascara="cep" placeholder="00000-000" required minlength="9"></div>
+            <div class="campo c3"><label for="uf" class="obrigatorio">UF</label><select id="uf" name="uf" required></select></div>
+            <div class="campo c6"><label for="municipio" class="obrigatorio">Município</label><input id="municipio" name="municipio" type="text" required></div>
+            <div class="campo c9"><label for="logradouro" class="obrigatorio">Logradouro</label><input id="logradouro" name="logradouro" type="text" required></div>
+            <div class="campo c3"><label for="numero" class="obrigatorio">Número</label><input id="numero" name="numero" type="text" required></div>
+            <div class="campo c6"><label for="complemento">Complemento</label><input id="complemento" name="complemento" type="text"></div>
+            <div class="campo c6"><label for="bairro" class="obrigatorio">Bairro</label><input id="bairro" name="bairro" type="text" required></div>
+          </div>
+        </fieldset>
+      </section>
+
+      <!-- 4. Questionário socioeconômico -->
+      <section class="etapa" data-id="questionario" data-titulo="Questionário socioeconômico">
+        <div class="etapa-cabecalho">
+          <h2>Questionário socioeconômico</h2>
+          <p>As respostas definem em quais modalidades de reserva de vagas (cotas) você pode concorrer.</p>
+        </div>
+
+        <div class="pergunta">
+          <span class="rotulo obrigatorio">Origem escolar: você cursou integralmente o ensino médio em escola pública ou em escola comunitária que atue no âmbito da educação do campo conveniada com o poder público?</span>
+          <div class="opcoes em-linha">
+            <label class="opcao"><input type="radio" name="q_escola_publica" value="sim" required> Sim</label>
+            <label class="opcao"><input type="radio" name="q_escola_publica" value="nao"> Não</label>
+          </div>
+          <p class="dica">"Integralmente" quer dizer os 3 anos do ensino médio em escola pública. Colégio militar, EJA e escola pública federal contam. Quem estudou um ano em escola particular, mesmo com bolsa, responde "Não".</p>
+        </div>
+
+        <div class="pergunta">
+          <span class="rotulo obrigatorio">Cor/etnia: como você se autodeclara?</span>
+          <div class="opcoes em-linha">
+            <label class="opcao"><input type="radio" name="q_cor" value="Amarela" required> Amarela</label>
+            <label class="opcao"><input type="radio" name="q_cor" value="Branca"> Branca</label>
+            <label class="opcao"><input type="radio" name="q_cor" value="Indígena"> Indígena</label>
+            <label class="opcao"><input type="radio" name="q_cor" value="Parda"> Parda</label>
+            <label class="opcao"><input type="radio" name="q_cor" value="Preta"> Preta</label>
+          </div>
+        </div>
+
+        <div class="pergunta">
+          <span class="rotulo obrigatorio">Origem quilombola: você é quilombola?</span>
+          <div class="opcoes em-linha">
+            <label class="opcao"><input type="radio" name="q_quilombola" value="sim" required> Sim</label>
+            <label class="opcao"><input type="radio" name="q_quilombola" value="nao"> Não</label>
+          </div>
+        </div>
+
+        <div class="pergunta">
+          <span class="rotulo obrigatorio">Condição de deficiência: você é pessoa com deficiência?</span>
+          <div class="opcoes em-linha">
+            <label class="opcao"><input type="radio" name="q_pcd" value="sim" required> Sim</label>
+            <label class="opcao"><input type="radio" name="q_pcd" value="nao"> Não</label>
+          </div>
+          <p class="dica">Quem for selecionado(a) como pessoa com deficiência apresenta laudo médico na matrícula.</p>
+        </div>
+
+        <div class="pergunta">
+          <span class="rotulo obrigatorio">Condição de renda: a renda familiar bruta mensal por pessoa (per capita) é igual ou inferior a 1 (um) salário mínimo?</span>
+          <div class="opcoes em-linha">
+            <label class="opcao"><input type="radio" name="q_baixa_renda" value="sim" required> Sim</label>
+            <label class="opcao"><input type="radio" name="q_baixa_renda" value="nao"> Não</label>
+          </div>
+          <p class="dica">Desde 2026 não é preciso digitar a renda de cada pessoa da família no Sisu: basta declarar. A comprovação só é feita na matrícula, se você for selecionado(a).</p>
+        </div>
+
+        <fieldset>
+          <legend>Calculadora de renda per capita</legend>
+          <p class="ajuda">Ferramenta de apoio: o resultado não é enviado nem salvo. Use a média dos rendimentos brutos dos últimos 3 meses.</p>
+          <div class="campos">
+            <div class="campo c6"><label for="calc_renda">Soma da renda bruta mensal da família (R$)</label><input id="calc_renda" name="calc_renda" type="text" inputmode="numeric" data-mascara="moeda" placeholder="0,00"></div>
+            <div class="campo c6"><label for="calc_pessoas">Número de pessoas da família (incluindo você)</label><input id="calc_pessoas" name="calc_pessoas" type="number" min="1" max="30" value="1"></div>
+          </div>
+          <div class="renda-resultado" id="calc_resultado" aria-live="polite"></div>
+          <p class="dica">Não entram na conta: auxílio-alimentação e transporte, diárias, reembolsos, seguro-desemprego e programas como o Bolsa Família.</p>
+        </fieldset>
+
+        <div class="pergunta">
+          <label class="opcao"><input type="checkbox" name="declaracao_veracidade" data-nome="Declaração" required>
+            <span class="rotulo obrigatorio">Declaro que as informações prestadas são verdadeiras e que estou ciente de que deverei comprová-las na matrícula, caso seja selecionado(a) em modalidade de reserva de vagas, sob pena de perder a vaga.</span></label>
+        </div>
+      </section>
+
+      <!-- 5. Modalidades de concorrência -->
+      <section class="etapa" data-id="modalidades" data-titulo="Modalidades">
+        <div class="etapa-cabecalho">
+          <h2>Modalidades de concorrência</h2>
+          <p>Confirme em quais modalidades você deseja concorrer. A lista depende das respostas do questionário.</p>
+        </div>
+        <div id="lista_modalidades"></div>
+        <p class="dica">Todo mundo concorre primeiro na ampla concorrência. Se a nota não for suficiente, o sistema tenta as cotas confirmadas, uma de cada vez. Marcar as cotas a que você tem direito só aumenta as chances.</p>
+        <div class="caixa info">
+          <p>Os documentos que comprovam cada modalidade (histórico escolar, renda, autodeclaração, laudo) só são pedidos na matrícula. Cada instituição publica a sua lista.</p>
+        </div>
+      </section>
+
+      <!-- 6. Escolha de cursos -->
+      <section class="etapa" data-id="cursos" data-titulo="Opções de curso">
+        <div class="etapa-cabecalho">
+          <h2>Escolha de cursos</h2>
+          <p>Escolha a 1ª opção (obrigatória) e, se quiser, a 2ª opção. A ordem indica sua preferência.</p>
+        </div>
+
+        <div id="opcoes_escolhidas"></div>
+        <p class="dica">Se você for selecionado(a) na 1ª opção, a 2ª nem é analisada. Coloque em 1º lugar o curso que você mais quer.</p>
+
+        <h3>Buscar cursos</h3>
+        <p class="ajuda">Instituições, cursos, vagas e notas de corte desta lista são fictícios.</p>
+        <div class="filtros">
+          <div class="campo"><label for="f_curso">Curso</label><input id="f_curso" type="search" placeholder="Ex.: Pedagogia"></div>
+          <div class="campo"><label for="f_ies">Instituição</label><select id="f_ies"></select></div>
+          <div class="campo"><label for="f_local">Município</label><select id="f_local"></select></div>
+          <div class="campo"><label for="f_formato">Formato de oferta</label><select id="f_formato"></select></div>
+          <div class="campo"><label for="f_turno">Turno</label><select id="f_turno"></select></div>
+        </div>
+        <div class="lista-ofertas" id="lista_ofertas" aria-live="polite"></div>
+      </section>
+
+      <!-- 7. Conferência -->
+      <section class="etapa" data-id="conferencia" data-titulo="Conferência" data-botao-proxima="Confirmar inscrição ✓">
+        <div class="etapa-cabecalho">
+          <h2>Confira sua inscrição</h2>
+          <p>Revise tudo antes de confirmar. Até o fim do prazo, você ainda poderá alterar.</p>
+        </div>
+        <div class="resumo" id="resumo_conferencia"></div>
+      </section>
+
+      <!-- 8. Comprovante -->
+      <section class="etapa" data-id="comprovante" data-titulo="Comprovante" data-sem-navegacao>
+        <div class="etapa-cabecalho">
+          <h2>Inscrição confirmada</h2>
+          <p>Imprima ou salve o comprovante. Se mudar as opções, gere um novo.</p>
+        </div>
+        <div class="comprovante resumo" id="comprovante"></div>
+
+        <div class="navegacao-etapa nao-imprimir">
+          <button type="button" class="botao secundario" id="btn_alterar">Alterar inscrição</button>
+          <button type="button" class="botao" onclick="window.print()">Imprimir comprovante</button>
+        </div>
+
+        <div class="nao-imprimir">
+          <h3>Classificação parcial (simulação)</h3>
+          <p class="ajuda">No sistema real, a partir do 2º dia de inscrição, a classificação parcial é atualizada uma vez por dia, de madrugada.</p>
+          <div id="classificacao_parcial"></div>
+          <p class="dica">A nota de corte parcial muda todo dia, conforme as pessoas se inscrevem. Ela não garante a vaga: é só uma referência.</p>
+
+          <h3>Resultado e lista de espera (simulação)</h3>
+          <p><button type="button" class="botao secundario" id="btn_resultado">Simular resultado da chamada regular</button></p>
+          <div id="resultado" aria-live="polite"></div>
+
+          <div class="navegacao-etapa">
+            <a class="botao secundario" href="index.html">Voltar ao início</a>
+            <button type="button" class="botao perigo" onclick="location.reload()">Nova simulação (apaga tudo)</button>
+          </div>
+        </div>
+      </section>
+    </form>
+  </main>
+
+  <footer class="rodape">
+    Simulação educativa baseada nas orientações públicas do MEC para o Sisu 2026. Inscrição real: acessounico.mec.gov.br/sisu.
+    Projeto de extensão TADS · IFRS Campus Rolante. Sem vínculo com o MEC.
+  </footer>
+
+  <script src="js/dados.js"></script>
+  <script src="js/comum.js"></script>
+  <script src="js/sisu.js"></script>
+</body>
+</html>
