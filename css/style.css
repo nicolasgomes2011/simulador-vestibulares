@@ -461,13 +461,28 @@ tr.excluida td { color: var(--texto-suave); text-decoration: line-through; }
 .renda-resultado strong { font-size: 1.2rem; }
 
 .rodape {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 1rem 1rem 2rem;
+  background: #2b2a26;
+  color: #e9e6df;
   font-size: .82rem;
-  color: var(--texto-suave);
-  border-top: 1px solid var(--borda);
+  line-height: 1.6;
+  padding: 1.75rem 1rem 1.25rem;
+  margin-top: 1rem;
 }
+.rodape strong { color: #fff; }
+.rodape-conteudo {
+  max-width: calc(1100px - 2rem); /* alinha com o conteúdo do <main> */
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.25rem 2rem;
+}
+.rodape-aviso, .rodape-ano {
+  max-width: calc(1100px - 2rem);
+  margin: 1.25rem auto 0;
+  color: #bdb8ad;
+}
+.rodape-aviso { padding-top: 1rem; border-top: 1px solid #4a4840; }
+.rodape-ano { margin-top: .35rem; }
 
 .oculto { display: none !important; }
 
