@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Simulador Sisu</title>
   <meta name="description" content="Simulação educativa da inscrição no Sisu, com dados fictícios.">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=20261113">
 </head>
 <body class="programa-sisu">
   <div class="aviso-simulacao" role="note">
     <strong>SIMULADOR EDUCATIVO, NÃO É O SITE OFICIAL.</strong>
-    Use apenas dados fictícios. Nenhum dado é enviado ou armazenado.
+    <span class="aviso-extra">Use apenas dados fictícios. Nenhum dado é enviado ou armazenado.</span>
   </div>
 
   <header class="topo">
@@ -65,13 +65,12 @@
       </section>
 
       <!-- 2. Login gov.br (ilustrativo) -->
-      <section class="etapa" data-id="login" data-titulo="Acesso gov.br" data-botao-proxima="Entrar (simulado) →">
+      <section class="etapa" data-id="login" data-titulo="Acesso gov.br" data-botao-proxima="Entrar →">
         <div class="etapa-cabecalho">
           <h2>Acesso com a conta gov.br</h2>
           <p>No site oficial, o login é feito com CPF e senha da conta gov.br.</p>
         </div>
         <div class="login-simulado">
-          <span class="selo-login">LOGIN ILUSTRATIVO</span>
           <div class="campos">
             <div class="campo">
               <label for="login_cpf" class="obrigatorio">CPF</label>
@@ -79,9 +78,6 @@
             </div>
           </div>
           <p><button type="button" class="botao secundario pequeno" data-gerar-cpf="login_cpf">Gerar CPF fictício</button></p>
-          <div class="caixa alerta">
-            <p>Aqui <strong>não existe campo de senha</strong>, de propósito. Nunca digite sua senha gov.br em sites que não sejam do governo (endereço terminado em <strong>.gov.br</strong>).</p>
-          </div>
           <p class="dica">Quem fez o Enem já tem conta gov.br. Se esqueceu a senha, recupere pelo próprio gov.br antes do período de inscrição.</p>
         </div>
       </section>
@@ -196,7 +192,7 @@
 
         <fieldset>
           <legend>Calculadora de renda per capita</legend>
-          <p class="ajuda">Ferramenta de apoio: o resultado não é enviado nem salvo. Use a média dos rendimentos brutos dos últimos 3 meses.</p>
+          <p class="ajuda">Use a média dos rendimentos brutos dos últimos 3 meses.</p>
           <div class="campos">
             <div class="campo c6"><label for="calc_renda">Soma da renda bruta mensal da família (R$)</label><input id="calc_renda" name="calc_renda" type="text" inputmode="numeric" data-mascara="moeda" placeholder="0,00"></div>
             <div class="campo c6"><label for="calc_pessoas">Número de pessoas da família (incluindo você)</label><input id="calc_pessoas" name="calc_pessoas" type="number" min="1" max="30" value="1"></div>
@@ -235,7 +231,6 @@
         <p class="dica">Se você for selecionado(a) na 1ª opção, a 2ª nem é analisada. Coloque em 1º lugar o curso que você mais quer.</p>
 
         <h3>Buscar cursos</h3>
-        <p class="ajuda">Instituições, cursos, vagas e notas de corte desta lista são fictícios.</p>
         <div class="filtros">
           <div class="campo"><label for="f_curso">Curso</label><input id="f_curso" type="search" placeholder="Ex.: Pedagogia"></div>
           <div class="campo"><label for="f_ies">Instituição</label><select id="f_ies"></select></div>
@@ -269,12 +264,12 @@
         </div>
 
         <div class="nao-imprimir">
-          <h3>Classificação parcial (simulação)</h3>
+          <h3>Classificação parcial</h3>
           <p class="ajuda">No sistema real, a partir do 2º dia de inscrição, a classificação parcial é atualizada uma vez por dia, de madrugada.</p>
           <div id="classificacao_parcial"></div>
           <p class="dica">A nota de corte parcial muda todo dia, conforme as pessoas se inscrevem. Ela não garante a vaga: é só uma referência.</p>
 
-          <h3>Resultado e lista de espera (simulação)</h3>
+          <h3>Resultado e lista de espera</h3>
           <p><button type="button" class="botao secundario" id="btn_resultado">Simular resultado da chamada regular</button></p>
           <div id="resultado" aria-live="polite"></div>
 
@@ -308,8 +303,8 @@
     <p class="rodape-ano">© 2026 IFRS Campus Rolante</p>
   </footer>
 
-  <script src="js/dados.js"></script>
-  <script src="js/comum.js"></script>
-  <script src="js/sisu.js"></script>
+  <script src="js/dados.js?v=20261113"></script>
+  <script src="js/comum.js?v=20261113"></script>
+  <script src="js/sisu.js?v=20261113"></script>
 </body>
 </html>

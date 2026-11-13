@@ -1,7 +1,7 @@
 /* =========================================================
    Simulador Fies
-   Fluxo baseado no passo a passo do MEC para o Fies 2026
-   (Lei nº 10.260/2001). Dados só em memória.
+   Fluxo baseado no Edital SESu/MEC nº 52/2026 (Fies, 2º semestre
+   de 2026) e na Lei nº 10.260/2001. Dados só em memória.
    ========================================================= */
 
 const estado = {
@@ -10,45 +10,49 @@ const estado = {
   numeroInscricao: null
 };
 
-const COTAS_FIES = {
-  nenhuma: 'Não. Quero concorrer apenas na ampla concorrência',
-  pp: 'Sim: pessoas autodeclaradas pretas ou pardas',
-  ind: 'Sim: pessoas indígenas',
-  quil: 'Sim: pessoas quilombolas',
-  pcd: 'Sim: pessoas com deficiência'
+// Modalidades de concorrência do edital (item 2.7.1.1).
+const MODALIDADES_FIES = {
+  ampla: 'Ampla concorrência',
+  ppiq: 'Autodeclarados pretos, pardos, indígenas e quilombolas',
+  pcd: 'Pessoas com deficiência'
 };
+const TIPOS_VAGA = { social: 'Vagas Fies Social', demais: 'Demais vagas Fies' };
 const DIFERENCA_CORTE = { cota: 30, social: 40 }; // fictício
 
 /* ---------- Regras ---------- */
+// Média aritmética das 5 provas igual ou superior a 450 e redação acima de zero (item 2.3).
 function participacoesValidas() {
   return estado.candidato.enem.filter((p) =>
-    p.edicao >= EDICAO.fies.enemDesde && p.situacao === 'valida' && p.notas.red > 0 && mediaObjetivas(p.notas) >= 450);
+    p.edicao >= EDICAO.fies.enemDesde && p.situacao === 'valida' && p.notas.red > 0 && mediaSimples(p.notas) >= 450);
 }
 
 function melhorEdicao() {
   const validas = participacoesValidas();
   if (!validas.length) return null;
   return validas
-    .map((p) => ({ edicao: p.edicao, media: mediaSimples(p.notas), objetivas: mediaObjetivas(p.notas) }))
+    .map((p) => ({ edicao: p.edicao, media: mediaSimples(p.notas) }))
     .sort((a, b) => b.media - a.media)[0];
 }
 
-function cotasPermitidas() {
+function modalidadesPermitidas() {
   const cor = lerValor('raca_cor');
-  const lista = ['nenhuma'];
-  if (cor === 'Preta' || cor === 'Parda') lista.push('pp');
-  if (cor === 'Indígena') lista.push('ind');
-  if (lerValor('quilombola') === 'sim') lista.push('quil');
+  const lista = ['ampla'];
+  if (['Preta', 'Parda', 'Indígena'].includes(cor) || lerValor('quilombola') === 'sim') lista.push('ppiq');
   if (lerValor('pcd') === 'sim') lista.push('pcd');
   return lista;
 }
 
-function podeFiesSocial() {
-  return lerValor('cadunico') === 'sim' && grupo.totais().emSalarios <= 0.5;
+// No sistema real, o FiesSeleção consulta o CadÚnico pelo CPF. Aqui, usa a renda declarada.
+function identificadoNoCadUnico() {
+  return grupo.totais().emSalarios <= 0.5;
 }
 
 function querFiesSocial() {
-  return lerValor('fies_social') === 'sim';
+  return identificadoNoCadUnico() && lerValor('tipo_vaga') === 'social';
+}
+
+function hojeIso() {
+  return new Date().toISOString().slice(0, 10);
 }
 
 /* ---------- Etapa: dados pessoais ---------- */
@@ -58,11 +62,9 @@ function entrarDados(etapa) {
   $('#tabela_enem').innerHTML = tabelaEnemHtml(c.enem, (ano) => ano >= EDICAO.fies.enemDesde);
   const melhor = melhorEdicao();
   $('#situacao_enem').innerHTML = melhor
-    ? `<div class="caixa ok"><p>Edição considerada: <strong>Enem ${melhor.edicao}</strong>. Média das provas objetivas:
-       <strong>${Formatar.nota(melhor.objetivas)}</strong> (mínimo 450). Média geral: <strong>${Formatar.nota(melhor.media)}</strong>.</p></div>`
-    : '<div class="caixa erro"><p>Nenhuma edição do Enem atende aos requisitos (média de 450 nas provas objetivas e redação acima de zero).</p></div>';
-  const uf = $('#uf');
-  if (uf.options.length === 0) preencherSelect(uf, UFS);
+    ? `<div class="caixa ok"><p>Edição considerada: <strong>Enem ${melhor.edicao}</strong>, média das cinco provas
+       <strong>${Formatar.nota(melhor.media)}</strong> (mínimo exigido: 450).</p></div>`
+    : '<div class="caixa erro"><p>Nenhuma edição do Enem atende aos requisitos (média de 450 nas cinco provas e redação acima de zero).</p></div>';
 }
 
 function validarDados(etapa) {
@@ -74,21 +76,28 @@ function validarDados(etapa) {
   return erros;
 }
 
-/* ---------- Campos que aparecem conforme a resposta ---------- */
+/* ---------- Etapa: perfil e modalidade ---------- */
+function renderizarModalidades() {
+  const permitidas = modalidadesPermitidas();
+  const atual = lerValor('cota');
+  $('#lista_modalidades').innerHTML = Object.entries(MODALIDADES_FIES).map(([valor, texto]) => {
+    const pode = permitidas.includes(valor);
+    return `<label class="opcao"><input type="radio" name="cota" value="${valor}" required
+      ${pode ? '' : 'disabled'} ${pode && atual === valor ? 'checked' : ''}>
+      <span>${escaparHtml(texto)} ${pode ? '' : '<span class="ajuda">(não se aplica ao seu perfil)</span>'}</span></label>`;
+  }).join('');
+}
+
 document.addEventListener('change', (e) => {
-  const { name, value } = e.target;
-  if (name === 'raca_cor') $('#bloco_etnia').classList.toggle('oculto', value !== 'Indígena');
-  if (name === 'pcd') $('#bloco_deficiencia').classList.toggle('oculto', value !== 'sim');
-  if (name === 'cadunico') {
-    $('#bloco_nis').classList.toggle('oculto', value !== 'sim');
-    atualizarFiesSocial();
-  }
+  if (['raca_cor', 'quilombola', 'pcd'].includes(e.target.name)) renderizarModalidades();
 });
 
 /* ---------- Grupo familiar ---------- */
 const grupo = new GrupoFamiliar({
   tabela: $('#tabela_grupo'),
   resultado: $('#resultado_renda'),
+  comParentesco: false,
+  cpfAPartirDe: 14,
   descreverRenda(t) {
     const linha = (ok, texto) => `${ok ? '✅' : '❌'} ${texto}`;
     return [
@@ -99,54 +108,51 @@ const grupo = new GrupoFamiliar({
 });
 
 function validarGrupo() {
-  return grupo.totais().emSalarios > 3
-    ? ['Renda per capita acima de 3 salários mínimos: com essa renda não é possível concorrer ao Fies.']
-    : [];
-}
-
-/* ---------- Etapa: Fies Social e cotas ---------- */
-function atualizarFiesSocial() {
-  const pode = podeFiesSocial();
-  const sim = $('[name="fies_social"][value="sim"]');
-  sim.disabled = !pode;
-  if (!pode && sim.checked) sim.checked = false;
-  const perCapita = Formatar.moeda(grupo.totais().perCapita);
-  $('#aviso_fies_social').innerHTML = pode
-    ? `<div class="caixa ok"><p>Você está no CadÚnico e sua renda per capita é ${perCapita}: pode concorrer ao Fies Social.</p></div>`
-    : `<div class="caixa alerta"><p>Para o Fies Social é preciso estar no CadÚnico e ter renda per capita de até ${Formatar.moeda(SALARIO_MINIMO / 2)}. A sua é ${perCapita}.</p></div>`;
-}
-
-function entrarModalidade() {
-  atualizarFiesSocial();
-  const permitidas = cotasPermitidas();
-  const atual = lerValor('cota');
-  $('#lista_cotas').innerHTML = Object.entries(COTAS_FIES).map(([valor, texto]) => {
-    const pode = permitidas.includes(valor);
-    return `<label class="opcao"><input type="radio" name="cota" value="${valor}" required
-      ${pode ? '' : 'disabled'} ${pode && atual === valor ? 'checked' : ''}>
-      <span>${escaparHtml(texto)} ${pode ? '' : '<span class="ajuda">(não se aplica ao seu perfil)</span>'}</span></label>`;
-  }).join('');
+  const erros = grupo.erros(hojeIso());
+  if (grupo.totais().emSalarios > 3) {
+    erros.push('Renda per capita acima de 3 salários mínimos: com essa renda não é possível concorrer ao Fies.');
+  }
+  return erros;
 }
 
 /* ---------- Etapa: cursos ---------- */
+function renderizarTipoVaga() {
+  if (!identificadoNoCadUnico()) {
+    $('#bloco_tipo_vaga').innerHTML = `<div class="caixa info"><p>Seu CPF não foi identificado no CadÚnico com renda per capita de até
+      ${Formatar.moeda(SALARIO_MINIMO / 2)}. Você concorre às <strong>demais vagas Fies</strong>.</p></div>`;
+    return;
+  }
+  const atual = lerValor('tipo_vaga');
+  $('#bloco_tipo_vaga').innerHTML = `<div class="caixa ok"><p>Seu CPF foi identificado no CadÚnico com renda per capita de até meio salário mínimo.</p></div>
+    <div class="pergunta"><span class="rotulo obrigatorio">A qual tipo de vaga você vai concorrer?</span>
+      <div class="opcoes">${Object.entries(TIPOS_VAGA).map(([valor, texto]) => `<label class="opcao">
+        <input type="radio" name="tipo_vaga" value="${valor}" required ${atual === valor ? 'checked' : ''}> <span>${texto}</span></label>`).join('')}</div>
+      <p class="dica">A escolha vale para todas as opções de curso. No sistema real, a consulta ao CadÚnico é automática, feita pelo CPF.</p>
+    </div>`;
+}
+
 function ofertasFies() {
   return OFERTAS_PRIVADAS.filter((o) => o.fies);
 }
 
 function iniciarFiltros() {
-  const unicos = (chave) => [...new Set(ofertasFies().map((o) => o[chave]))].sort((a, b) => a.localeCompare(b, 'pt-BR'));
-  preencherSelect($('#f_ies'), unicos('ies'), 'Todas');
-  preencherSelect($('#f_municipio'), unicos('municipio'), 'Todos');
-  preencherSelect($('#f_turno'), unicos('turno'), 'Todos');
-  ['#f_curso', '#f_ies', '#f_municipio', '#f_turno'].forEach((sel) => $(sel).addEventListener('input', renderizarOfertas));
+  const unicos = (valores) => [...new Set(valores)].sort((a, b) => String(a).localeCompare(String(b), 'pt-BR'));
+  preencherSelect($('#f_uf'), unicos(ofertasFies().map((o) => o.uf)), 'Todos');
+  preencherSelect($('#f_municipio'), unicos(ofertasFies().map((o) => o.municipio)), 'Todos');
+  preencherSelect($('#f_conceito'), unicos(ofertasFies().map((o) => String(o.fies.conceito))), 'Todos');
+  preencherSelect($('#f_ies'), unicos(ofertasFies().map((o) => o.ies)), 'Todas');
+  ['#f_uf', '#f_municipio', '#f_curso', '#f_conceito', '#f_ies'].forEach((sel) => $(sel).addEventListener('input', renderizarOfertas));
 }
 
 function renderizarOfertas() {
   const termo = $('#f_curso').value.trim().toLowerCase();
-  const filtros = { ies: $('#f_ies').value, municipio: $('#f_municipio').value, turno: $('#f_turno').value };
+  const uf = $('#f_uf').value;
+  const municipio = $('#f_municipio').value;
+  const conceito = $('#f_conceito').value;
+  const ies = $('#f_ies').value;
   const lista = ofertasFies().filter((o) =>
-    (!termo || o.curso.toLowerCase().includes(termo)) &&
-    Object.entries(filtros).every(([chave, valor]) => !valor || o[chave] === valor));
+    (!termo || o.curso.toLowerCase().includes(termo)) && (!uf || o.uf === uf) && (!municipio || o.municipio === municipio) &&
+    (!conceito || String(o.fies.conceito) === conceito) && (!ies || o.ies === ies));
 
   if (!lista.length) {
     $('#lista_ofertas').innerHTML = '<div class="caixa">Nenhum curso encontrado com esses filtros.</div>';
@@ -168,8 +174,8 @@ function renderizarOfertas() {
         <div class="meta">${escaparHtml(o.ies)} (${escaparHtml(o.sigla)}) · ${escaparHtml(o.local)} · ${escaparHtml(o.municipio)}/${o.uf}</div>
         <span class="etiqueta">Conceito do curso: ${o.fies.conceito}</span>
         <span class="etiqueta">Mensalidade: ${Formatar.moeda(o.mensalidade)}</span>
-        <span class="etiqueta">Vagas Fies: ${o.fies.vagas}</span>
         <span class="etiqueta">Vagas Fies Social: ${o.fies.vagasSocial}</span>
+        <span class="etiqueta">Demais vagas Fies: ${o.fies.vagas}</span>
       </div>
       <div class="acoes">${acoes}</div>
     </article>`;
@@ -206,7 +212,7 @@ $('#opcoes_escolhidas').addEventListener('click', (e) => {
   const botao = e.target.closest('[data-remover]');
   if (!botao) return;
   estado.opcoes[Number(botao.dataset.remover)] = null;
-  // As opções restantes sobem, mantendo a ordem de preferência.
+  // As opções restantes sobem, mantendo a ordem de prioridade.
   const restantes = estado.opcoes.filter(Boolean);
   estado.opcoes = [0, 1, 2].map((i) => restantes[i] || null);
   renderizarOpcoes();
@@ -214,6 +220,7 @@ $('#opcoes_escolhidas').addEventListener('click', (e) => {
 });
 
 function entrarCursos() {
+  renderizarTipoVaga();
   renderizarOpcoes();
   renderizarOfertas();
 }
@@ -231,38 +238,32 @@ const TEXTO_ENSINO_MEDIO = {
 };
 
 function paresDados() {
-  const endereco = [lerValor('logradouro'), lerValor('numero'), lerValor('complemento'), lerValor('bairro'),
-    `${lerValor('municipio')}/${lerValor('uf')}`, `CEP ${lerValor('cep')}`].filter(Boolean).join(', ');
   return [
     ['Nome completo', lerValor('nome')],
     ['CPF', lerValor('cpf')],
     ['Data de nascimento', Formatar.data(lerValor('data_nascimento'))],
-    ['Sexo', lerValor('sexo')],
-    ['Estado civil', lerValor('estado_civil')],
     ['E-mail', lerValor('email')],
-    ['Telefone celular', lerValor('celular')],
-    ['Endereço', endereco]
+    ['Telefone celular', lerValor('celular')]
   ];
 }
 
 function paresPerfil() {
   const melhor = melhorEdicao();
+  const simNao = (nome) => (lerValor(nome) === 'sim' ? 'Sim' : 'Não');
   return [
-    ['Cor/raça', lerValor('raca_cor') + (lerValor('raca_cor') === 'Indígena' ? ` (etnia: ${lerValor('etnia')})` : '')],
-    ['Quilombola', lerValor('quilombola') === 'sim' ? 'Sim' : 'Não'],
-    ['Pessoa com deficiência', lerValor('pcd') === 'sim' ? `Sim (${lerValor('tipo_deficiencia')})` : 'Não'],
-    ['Ensino médio', `${TEXTO_ENSINO_MEDIO[lerValor('ensino_medio')]} · concluído em ${lerValor('ano_conclusao')}`],
-    ['Já concluiu curso superior', lerValor('superior_concluido') === 'sim' ? 'Sim' : 'Não'],
-    ['Já teve Fies', lerValor('ja_teve_fies') === 'sim' ? 'Sim' : 'Não'],
+    ['Etnia/cor', lerValor('raca_cor')],
+    ['Quilombola', simNao('quilombola')],
+    ['Pessoa com deficiência', simNao('pcd')],
+    ['Concluiu o ensino superior', simNao('superior_concluido')],
+    ['Ensino médio', TEXTO_ENSINO_MEDIO[lerValor('ensino_medio')]],
     ['Enem considerado', `${melhor.edicao} · média ${Formatar.nota(melhor.media)}`]
   ];
 }
 
 function paresModalidade() {
   return [
-    ['Inscrito(a) no CadÚnico', lerValor('cadunico') === 'sim' ? `Sim (NIS ${lerValor('nis')})` : 'Não'],
-    ['Concorre ao Fies Social', querFiesSocial() ? 'Sim' : 'Não'],
-    ['Cotas', COTAS_FIES[lerValor('cota')]]
+    ['Modalidade de concorrência', MODALIDADES_FIES[lerValor('cota')]],
+    ['Tipo de vaga', querFiesSocial() ? TIPOS_VAGA.social : TIPOS_VAGA.demais]
   ];
 }
 
@@ -280,9 +281,9 @@ function opcaoHtml(opcao, i) {
 function entrarConferencia() {
   $('#resumo_conferencia').innerHTML =
     '<h3>Dados pessoais</h3>' + listaDefinicaoHtml(paresDados()) +
-    '<h3>Cor, etnia e ensino médio</h3>' + listaDefinicaoHtml(paresPerfil()) +
-    '<h3>Grupo familiar (renda mensal bruta)</h3>' + listaDefinicaoHtml(grupo.resumo()) +
-    '<h3>Fies Social e cotas</h3>' + listaDefinicaoHtml(paresModalidade()) +
+    '<h3>Perfil</h3>' + listaDefinicaoHtml(paresPerfil()) +
+    '<h3>Grupo familiar (renda bruta mensal)</h3>' + listaDefinicaoHtml(grupo.resumo()) +
+    '<h3>Modalidade e tipo de vaga</h3>' + listaDefinicaoHtml(paresModalidade()) +
     estado.opcoes.filter(Boolean).map(opcaoHtml).join('');
 }
 
@@ -307,14 +308,14 @@ function simularResultado() {
     const corte = opcoes[i].oferta.fies.corte;
     let via = null;
     if (nota >= corte) via = 'ampla concorrência';
-    else if (cota !== 'nenhuma' && nota >= corte - DIFERENCA_CORTE.cota) via = 'cotas';
-    else if (querFiesSocial() && nota >= corte - DIFERENCA_CORTE.social) via = 'vagas do Fies Social';
+    else if (cota !== 'ampla' && nota >= corte - DIFERENCA_CORTE.cota) via = MODALIDADES_FIES[cota].toLowerCase();
+    else if (querFiesSocial() && nota >= corte - DIFERENCA_CORTE.social) via = 'vagas Fies Social';
     if (via) {
       const percentual = querFiesSocial()
-        ? 'Pelo Fies Social, o financiamento pode cobrir até 100% da mensalidade.'
+        ? 'Pelo Fies Social, o financiamento pode cobrir até 100% dos encargos educacionais.'
         : 'O percentual financiado é definido depois, conforme a renda familiar e o valor da mensalidade.';
       $('#resultado').innerHTML = `<div class="caixa ok">
-        <p><strong>Pré-selecionado(a) na ${i + 1}ª opção:</strong> ${escaparHtml(opcoes[i].oferta.curso)} · ${escaparHtml(opcoes[i].oferta.ies)}, por ${via}.</p>
+        <p><strong>Pré-selecionado(a) na ${i + 1}ª opção:</strong> ${escaparHtml(opcoes[i].oferta.curso)} · ${escaparHtml(opcoes[i].oferta.ies)}, por ${escaparHtml(via)}.</p>
         <p>${percentual}</p>
         <p>Próximos passos: complementar a inscrição no prazo, validar as informações na CPSA da faculdade e assinar o contrato no banco.</p></div>`;
       return;
@@ -333,20 +334,17 @@ const preenchimentos = {
     const c = CANDIDATO_FICTICIO;
     definirValor('nome', c.nome);
     definirValor('data_nascimento', c.dataNascimento);
-    definirValor('sexo', c.sexo);
-    definirValor('estado_civil', 'Solteiro(a)');
-    ['email', 'celular', 'telefone', 'cep', 'uf', 'municipio', 'logradouro', 'numero', 'complemento', 'bairro']
-      .forEach((campo) => definirValor(campo, c[campo]));
+    definirValor('email', c.email);
     definirValor('email_confirmacao', c.email);
+    definirValor('celular', c.celular);
   },
   perfil() {
     definirValor('raca_cor', 'Parda');
     definirValor('quilombola', 'nao');
     definirValor('pcd', 'nao');
-    definirValor('ensino_medio', 'publica');
-    definirValor('ano_conclusao', '2025');
     definirValor('superior_concluido', 'nao');
-    definirValor('ja_teve_fies', 'nao');
+    definirValor('ensino_medio', 'publica');
+    definirValor('cota', 'ppiq');
   },
   // Família com renda baixa para mostrar o Fies Social.
   grupo() {
@@ -356,13 +354,8 @@ const preenchimentos = {
       GRUPO_FAMILIAR_FICTICIO[2]
     ]);
   },
-  modalidade() {
-    definirValor('cadunico', 'sim');
-    definirValor('nis', '12345678901');
-    definirValor('fies_social', 'sim');
-    definirValor('cota', 'pp');
-  },
   cursos() {
+    if (identificadoNoCadUnico()) definirValor('tipo_vaga', 'social');
     estado.opcoes = ['p5', 'p4', 'p2'].map((id) => ({ oferta: OFERTAS_PRIVADAS.find((o) => o.id === id) }));
     renderizarOpcoes();
     renderizarOfertas();
@@ -371,13 +364,15 @@ const preenchimentos = {
 };
 
 /* ---------- Início ---------- */
+renderizarModalidades();
+
 const assistente = new Assistente({
   formulario: $('#formulario'),
   indicador: $('#indicador'),
   aoEntrar: {
     dados: entrarDados,
+    perfil: renderizarModalidades,
     grupo: () => grupo.definirCandidato(candidatoDoFormulario()),
-    modalidade: entrarModalidade,
     cursos: entrarCursos,
     conferencia: entrarConferencia,
     comprovante: entrarComprovante

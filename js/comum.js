@@ -1,5 +1,5 @@
 /* =========================================================
-   Funções compartilhadas pelos três simuladores.
+   Funções compartilhadas pelos simuladores.
    IMPORTANTE: nenhum dado é enviado pela rede nem salvo
    (sem banco de dados, sem localStorage, sem cookies).
    Tudo fica só na memória da página e some ao recarregar.
@@ -186,12 +186,12 @@ function tabelaEnemHtml(participacoes, edicoesAceitas) {
     const aceita = edicoesAceitas(p.edicao) && p.situacao === 'valida' && p.notas.red > 0;
     const situacao = !edicoesAceitas(p.edicao) ? 'Edição não aceita neste processo' : situacaoEnemTexto(p);
     return `<tr class="${aceita ? '' : 'excluida'}">
-      <td>${p.edicao}</td><td>${p.inscricao}</td>
-      <td class="num">${Formatar.nota(p.notas.lc)}</td><td class="num">${Formatar.nota(p.notas.ch)}</td>
-      <td class="num">${Formatar.nota(p.notas.cn)}</td><td class="num">${Formatar.nota(p.notas.mt)}</td>
-      <td class="num">${Formatar.nota(p.notas.red)}</td><td>${situacao}</td></tr>`;
+      <td data-rotulo="Edição">${p.edicao}</td><td data-rotulo="Nº de inscrição">${p.inscricao}</td>
+      <td class="num" data-rotulo="Linguagens">${Formatar.nota(p.notas.lc)}</td><td class="num" data-rotulo="Humanas">${Formatar.nota(p.notas.ch)}</td>
+      <td class="num" data-rotulo="Natureza">${Formatar.nota(p.notas.cn)}</td><td class="num" data-rotulo="Matemática">${Formatar.nota(p.notas.mt)}</td>
+      <td class="num" data-rotulo="Redação">${Formatar.nota(p.notas.red)}</td><td data-rotulo="Situação">${situacao}</td></tr>`;
   }).join('');
-  return `<div class="tabela-rolagem"><table>
+  return `<div class="tabela-rolagem"><table class="tabela-empilhavel">
     <thead><tr><th>Edição</th><th>Nº de inscrição</th><th class="num">Linguagens</th><th class="num">Humanas</th>
     <th class="num">Natureza</th><th class="num">Matemática</th><th class="num">Redação</th><th>Situação</th></tr></thead>
     <tbody>${linhas}</tbody></table></div>`;
@@ -231,9 +231,12 @@ class Assistente {
     return this.etapas[this.atual].dataset.id;
   }
 
+  // No celular, só a etapa atual aparece, com "Etapa X de N".
   criarIndicador() {
+    const total = this.etapas.length;
     this.indicador.innerHTML = this.etapas
-      .map((etapa) => `<li>${escaparHtml(etapa.dataset.titulo)}</li>`)
+      .map((etapa, i) => `<li><span class="etapa-texto">${escaparHtml(etapa.dataset.titulo)}
+        <small class="etapa-de">Etapa ${i + 1} de ${total}</small></span></li>`)
       .join('');
   }
 
@@ -350,11 +353,23 @@ function candidatoDoFormulario() {
    Tabela com o candidato + membros da família e a renda bruta
    mensal de cada um. Calcula a renda per capita na hora.
    ========================================================= */
+// Idade completa em anos numa data de referência (datas no formato AAAA-MM-DD).
+function idadeEm(nascimento, referencia) {
+  if (!nascimento) return null;
+  const [a, m, d] = nascimento.split('-').map(Number);
+  const [ra, rm, rd] = referencia.split('-').map(Number);
+  return ra - a - (rm < m || (rm === m && rd < d) ? 1 : 0);
+}
+
 class GrupoFamiliar {
-  constructor({ tabela, resultado, descreverRenda }) {
+  // comParentesco: mostra a coluna de parentesco.
+  // cpfAPartirDe: idade a partir da qual o CPF do membro é obrigatório (0 = todos).
+  constructor({ tabela, resultado, descreverRenda, comParentesco = true, cpfAPartirDe = 0 }) {
     this.tabela = tabela;
     this.resultado = resultado;
     this.descreverRenda = descreverRenda;
+    this.comParentesco = comParentesco;
+    this.cpfAPartirDe = cpfAPartirDe;
     this.candidato = null;
     this.rendaCandidato = '';
     this.membros = [];
@@ -401,31 +416,43 @@ class GrupoFamiliar {
     const c = this.candidato;
     const opcoesParentesco = (atual) => '<option value="">Selecione</option>' + PARENTESCOS
       .map((p) => `<option ${p === atual ? 'selected' : ''}>${escaparHtml(p)}</option>`).join('');
+    const rotuloCpf = this.cpfAPartirDe ? `CPF (obrigatório a partir de ${this.cpfAPartirDe} anos)` : 'CPF';
     const linhasMembros = this.membros.map((m, i) => `<tr>
-      <td><input type="text" name="membro_${i}_nome" aria-label="Nome do membro ${i + 1}" data-indice="${i}" data-campo="nome" value="${escaparHtml(m.nome)}" required></td>
-      <td><input type="text" name="membro_${i}_cpf" aria-label="CPF do membro ${i + 1}" data-indice="${i}" data-campo="cpf" data-mascara="cpf" inputmode="numeric" value="${escaparHtml(m.cpf)}" required minlength="14">
+      <td data-rotulo="Nome completo"><input type="text" name="membro_${i}_nome" aria-label="Nome do membro ${i + 1}" data-indice="${i}" data-campo="nome" value="${escaparHtml(m.nome)}" required></td>
+      <td data-rotulo="${rotuloCpf}"><input type="text" name="membro_${i}_cpf" aria-label="CPF do membro ${i + 1}" data-indice="${i}" data-campo="cpf" data-mascara="cpf" inputmode="numeric" placeholder="000.000.000-00" value="${escaparHtml(m.cpf)}" minlength="14" ${this.cpfAPartirDe ? '' : 'required'}>
           <button type="button" class="botao-painel" data-gerar-cpf="membro_${i}_cpf">Gerar fictício</button></td>
-      <td><input type="date" name="membro_${i}_nascimento" aria-label="Data de nascimento do membro ${i + 1}" data-indice="${i}" data-campo="dataNascimento" value="${escaparHtml(m.dataNascimento)}" required></td>
-      <td><select name="membro_${i}_parentesco" aria-label="Parentesco do membro ${i + 1}" data-indice="${i}" data-campo="parentesco" required>${opcoesParentesco(m.parentesco)}</select></td>
-      <td><input type="text" name="membro_${i}_renda" aria-label="Renda bruta mensal do membro ${i + 1}" data-indice="${i}" data-campo="renda" data-mascara="moeda" inputmode="numeric" placeholder="0,00" value="${escaparHtml(m.renda)}" required></td>
-      <td><button type="button" class="botao perigo pequeno" data-remover-membro="${i}" aria-label="Remover membro ${i + 1}">Remover</button></td>
+      <td data-rotulo="Data de nascimento"><input type="date" name="membro_${i}_nascimento" aria-label="Data de nascimento do membro ${i + 1}" data-indice="${i}" data-campo="dataNascimento" value="${escaparHtml(m.dataNascimento)}" required></td>
+      ${this.comParentesco ? `<td data-rotulo="Parentesco"><select name="membro_${i}_parentesco" aria-label="Parentesco do membro ${i + 1}" data-indice="${i}" data-campo="parentesco" required>${opcoesParentesco(m.parentesco)}</select></td>` : ''}
+      <td data-rotulo="Renda bruta mensal (R$)"><input type="text" name="membro_${i}_renda" aria-label="Renda bruta mensal do membro ${i + 1}" data-indice="${i}" data-campo="renda" data-mascara="moeda" inputmode="numeric" placeholder="0,00" value="${escaparHtml(m.renda)}" required></td>
+      <td class="acao-linha"><button type="button" class="botao perigo pequeno" data-remover-membro="${i}" aria-label="Remover membro ${i + 1}">Remover</button></td>
     </tr>`).join('');
 
-    this.tabela.innerHTML = `<div class="tabela-rolagem"><table class="tabela-grupo">
-      <thead><tr><th>Nome completo</th><th>CPF</th><th>Data de nascimento</th><th>Parentesco</th><th>Renda bruta mensal (R$)</th><th></th></tr></thead>
+    this.tabela.innerHTML = `<div class="tabela-rolagem"><table class="tabela-grupo tabela-empilhavel">
+      <thead><tr><th>Nome completo</th><th>CPF</th><th>Data de nascimento</th>${this.comParentesco ? '<th>Parentesco</th>' : ''}<th>Renda bruta mensal (R$)</th><th></th></tr></thead>
       <tbody>
         <tr>
-          <td><strong>${escaparHtml(c ? c.nome : '')}</strong></td>
-          <td>${escaparHtml(c ? c.cpf : '')}</td>
-          <td>${c ? Formatar.data(c.dataNascimento) : ''}</td>
-          <td>Candidato(a)</td>
-          <td><input type="text" name="renda_candidato" aria-label="Sua renda bruta mensal" data-mascara="moeda" inputmode="numeric" placeholder="0,00" value="${escaparHtml(this.rendaCandidato)}" required></td>
-          <td></td>
+          <td data-rotulo="Nome completo"><strong>${escaparHtml(c ? c.nome : '')}</strong> <span class="ajuda">(você)</span></td>
+          <td data-rotulo="CPF">${escaparHtml(c ? c.cpf : '')}</td>
+          <td data-rotulo="Data de nascimento">${c ? Formatar.data(c.dataNascimento) : ''}</td>
+          ${this.comParentesco ? '<td data-rotulo="Parentesco">Candidato(a)</td>' : ''}
+          <td data-rotulo="Renda bruta mensal (R$)"><input type="text" name="renda_candidato" aria-label="Sua renda bruta mensal" data-mascara="moeda" inputmode="numeric" placeholder="0,00" value="${escaparHtml(this.rendaCandidato)}" required></td>
+          <td class="acao-linha"></td>
         </tr>
         ${linhasMembros}
       </tbody></table></div>
       <button type="button" class="botao secundario pequeno" data-adicionar-membro>+ Adicionar membro do grupo familiar</button>`;
     this.atualizarResultado();
+  }
+
+  // Regras que o HTML sozinho não confere (CPF conforme a idade).
+  erros(dataReferencia) {
+    if (!this.cpfAPartirDe) return [];
+    return this.membros.flatMap((m, i) => {
+      const idade = idadeEm(m.dataNascimento, dataReferencia);
+      return idade !== null && idade >= this.cpfAPartirDe && !cpfValido(m.cpf)
+        ? [`CPF do membro ${i + 1}: obrigatório para quem tem ${this.cpfAPartirDe} anos ou mais.`]
+        : [];
+    });
   }
 
   atualizarResultado() {
@@ -449,7 +476,7 @@ class GrupoFamiliar {
   // Linhas para a ficha/comprovante.
   resumo() {
     const linhas = [[`${this.candidato.nome} (candidato/a)`, Formatar.moeda(lerMoeda(this.rendaCandidato))]]
-      .concat(this.membros.map((m) => [`${m.nome} (${m.parentesco})`, Formatar.moeda(lerMoeda(m.renda))]));
+      .concat(this.membros.map((m) => [this.comParentesco ? `${m.nome} (${m.parentesco})` : m.nome, Formatar.moeda(lerMoeda(m.renda))]));
     const t = this.totais();
     linhas.push(['Renda per capita', `${Formatar.moeda(t.perCapita)} (${t.pessoas} pessoas)`]);
     return linhas;

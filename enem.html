@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Simulador Enem</title>
+  <meta name="description" content="Simulação educativa da inscrição no Enem, com dados fictícios.">
+  <link rel="stylesheet" href="css/style.css?v=20261113">
+</head>
+<body class="programa-enem">
+  <div class="aviso-simulacao" role="note">
+    <strong>SIMULADOR EDUCATIVO, NÃO É O SITE OFICIAL.</strong>
+    <span class="aviso-extra">Use apenas dados fictícios. Nenhum dado é enviado ou armazenado.</span>
+  </div>
+
+  <header class="topo">
+    <div class="topo-conteudo">
+      <a class="marca" href="index.html">
+        <span class="marca-icone" aria-hidden="true">SV</span>
+        <span>
+          <span class="marca-titulo">Simulador de Vestibulares · Enem</span><br>
+          <span class="marca-sub">Exame Nacional do Ensino Médio (simulação)</span>
+        </span>
+      </a>
+      <div class="painel-apresentador nao-imprimir" id="painel-apresentador" aria-label="Ferramentas do apresentador">
+        <span class="rotulo-painel">Apresentador:</span>
+        <button type="button" class="botao-painel" data-painel="preencher">Preencher com dados fictícios</button>
+        <button type="button" class="botao-painel" data-painel="dicas" aria-pressed="false">Dicas</button>
+        <button type="button" class="botao-painel" data-painel="menor" aria-label="Diminuir fonte">A−</button>
+        <button type="button" class="botao-painel" data-painel="maior" aria-label="Aumentar fonte">A+</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <ol class="etapas-indicador" id="indicador" aria-label="Etapas da inscrição"></ol>
+
+    <form id="formulario" class="cartao" autocomplete="off">
+
+      <!-- 1. Página inicial -->
+      <section class="etapa" data-id="inicio" data-titulo="Início" data-botao-proxima="Acessar a Página do Participante →">
+        <div class="etapa-cabecalho">
+          <h2>Enem 2026</h2>
+          <p>Exame Nacional do Ensino Médio. A nota é usada no Sisu, no Prouni, no Fies e em vestibulares de várias instituições.</p>
+        </div>
+        <div class="caixa info">
+          <p><strong>Quem pode se inscrever</strong></p>
+          <ul>
+            <li>Quem já concluiu o ensino médio ou vai concluir em 2026;</li>
+            <li>quem vai concluir depois de 2026, como <strong>treineiro</strong> (a nota serve só para autoavaliação);</li>
+            <li>quem tem 18 anos ou mais, não concluiu o ensino médio e quer usar o Enem para obter o certificado de conclusão.</li>
+          </ul>
+        </div>
+        <h3>Como funciona a inscrição</h3>
+        <ol>
+          <li>Entrar na Página do Participante com a conta gov.br.</li>
+          <li>Pedir a isenção da taxa, se tiver direito (o pedido é feito antes do período de inscrição).</li>
+          <li>Informar CPF, data de nascimento, endereço e contato.</li>
+          <li>Pedir atendimento especializado e tratamento pelo nome social, se precisar.</li>
+          <li>Escolher a língua estrangeira.</li>
+          <li>Informar a situação do ensino médio.</li>
+          <li>Escolher a UF e o município de prova.</li>
+          <li>Responder ao questionário socioeconômico e concluir.</li>
+          <li>Quem não tem isenção paga a taxa de <strong>R$ 85,00</strong>.</li>
+        </ol>
+        <div class="caixa alerta">
+          <p><strong>Datas do Enem 2026:</strong> inscrições de 25 de maio a 5 de junho, pagamento da taxa até 10 de junho, provas em 8 e 15 de novembro.</p>
+        </div>
+        <p class="dica">O concluinte de 2026 da rede pública que não fizer a inscrição é inscrito automaticamente. Mas aí é o Inep que escolhe o município de prova, e o estudante ainda precisa entrar na Página do Participante para escolher a língua estrangeira e responder ao questionário.</p>
+      </section>
+
+      <!-- 2. Login gov.br (ilustrativo) -->
+      <section class="etapa" data-id="login" data-titulo="Acesso gov.br" data-botao-proxima="Entrar →">
+        <div class="etapa-cabecalho">
+          <h2>Página do Participante · acesso com a conta gov.br</h2>
+          <p>No site oficial, o login é feito com CPF e senha da conta gov.br.</p>
+        </div>
+        <div class="login-simulado">
+          <div class="campos">
+            <div class="campo">
+              <label for="login_cpf" class="obrigatorio">CPF</label>
+              <input id="login_cpf" name="login_cpf" type="text" inputmode="numeric" data-mascara="cpf" placeholder="000.000.000-00" required>
+            </div>
+          </div>
+          <p><button type="button" class="botao secundario pequeno" data-gerar-cpf="login_cpf">Gerar CPF fictício</button></p>
+          <p class="dica">Esqueceu a senha? No gov.br, informe o CPF e clique em "Esqueci minha senha".</p>
+        </div>
+      </section>
+
+      <!-- 3. Isenção da taxa -->
+      <section class="etapa" data-id="isencao" data-titulo="Isenção da taxa">
+        <div class="etapa-cabecalho">
+          <h2>Isenção da taxa de inscrição</h2>
+          <p>O pedido de isenção é feito antes do período de inscrição e não substitui a inscrição.</p>
+        </div>
+
+        <div class="pergunta">
+          <span class="rotulo obrigatorio">Qual é a sua situação?</span>
+          <div class="opcoes">
+            <label class="opcao"><input type="radio" name="isencao_motivo" value="concluinte_publica" required> <span>Estou cursando a última série do ensino médio em 2026, em escola da rede pública <span class="ajuda">(isenção automática)</span></span></label>
+            <label class="opcao"><input type="radio" name="isencao_motivo" value="renda"> <span>Cursei todo o ensino médio em escola pública ou como bolsista integral em escola privada, e minha renda familiar por pessoa é de até 1,5 salário mínimo</span></label>
+            <label class="opcao"><input type="radio" name="isencao_motivo" value="cadunico"> <span>Minha família está inscrita no Cadastro Único (CadÚnico)</span></label>
+            <label class="opcao"><input type="radio" name="isencao_motivo" value="pe_de_meia"> <span>Participo do Programa Pé-de-Meia</span></label>
+            <label class="opcao"><input type="radio" name="isencao_motivo" value="nenhum"> <span>Não tenho direito à isenção (vou pagar a taxa)</span></label>
+          </div>
+        </div>
+
+        <div class="campos oculto" id="bloco_isencao_renda">
+          <div class="campo">
+            <label class="opcao"><input type="checkbox" name="isencao_documentos" required> <span class="rotulo obrigatorio">Anexei os documentos que comprovam a renda e a escola</span></label>
+          </div>
+        </div>
+        <div class="campos oculto" id="bloco_isencao_nis">
+          <div class="campo c6"><label for="isencao_nis" class="obrigatorio">Número de Identificação Social (NIS)</label>
+            <input id="isencao_nis" name="isencao_nis" type="text" inputmode="numeric" data-mascara="numero" maxlength="11" minlength="11" required placeholder="11 dígitos"></div>
+        </div>
+
+        <fieldset>
+          <legend>Justificativa de ausência</legend>
+          <div class="pergunta">
+            <span class="rotulo obrigatorio">No Enem 2025, você teve isenção da taxa e faltou aos dois dias de prova?</span>
+            <div class="opcoes em-linha">
+              <label class="opcao"><input type="radio" name="faltou_2025" value="sim" required> Sim</label>
+              <label class="opcao"><input type="radio" name="faltou_2025" value="nao"> Não</label>
+            </div>
+          </div>
+          <div class="campos oculto" id="bloco_justificativa">
+            <div class="campo c6"><label for="justificativa_motivo" class="obrigatorio">Motivo da ausência</label>
+              <select id="justificativa_motivo" name="justificativa_motivo" required>
+                <option value="">Selecione</option>
+                <option>Assalto ou furto</option><option>Acidente de trânsito</option><option>Atendimento médico ou internação</option>
+                <option>Morte na família</option><option>Trabalho</option><option>Outro motivo</option>
+              </select></div>
+            <div class="campo">
+              <label class="opcao"><input type="checkbox" name="justificativa_documento"> <span>Anexei documento que comprova o motivo</span></label>
+            </div>
+          </div>
+          <p class="dica">Quem teve isenção e faltou aos dois dias precisa justificar a ausência com documento. Sem justificativa aceita, não recebe isenção de novo.</p>
+        </fieldset>
+
+        <div id="resultado_isencao" aria-live="polite"></div>
+      </section>
+
+      <!-- 4. Dados pessoais, endereço e contato -->
+      <section class="etapa" data-id="dados" data-titulo="Dados pessoais">
+        <div class="etapa-cabecalho">
+          <h2>Dados pessoais</h2>
+          <p>Informe CPF e data de nascimento iguais aos da Receita Federal e confirme seus dados.</p>
+        </div>
+
+        <fieldset>
+          <legend>Identificação</legend>
+          <div class="campos">
+            <div class="campo c6"><label for="cpf" class="obrigatorio">CPF</label><input id="cpf" name="cpf" type="text" inputmode="numeric" data-mascara="cpf" placeholder="000.000.000-00" required minlength="14"></div>
+            <div class="campo c6"><label for="data_nascimento" class="obrigatorio">Data de nascimento</label><input id="data_nascimento" name="data_nascimento" type="date" required></div>
+            <div class="campo c6"><label for="nome" class="obrigatorio">Nome</label><input id="nome" name="nome" type="text" required></div>
+            <div class="campo c6"><label for="nome_mae" class="obrigatorio">Nome da mãe</label><input id="nome_mae" name="nome_mae" type="text" required></div>
+            <div class="campo c4"><label for="cor_raca" class="obrigatorio">Cor/raça</label>
+              <select id="cor_raca" name="cor_raca" required>
+                <option value="">Selecione</option>
+                <option>Branca</option><option>Preta</option><option>Parda</option><option>Amarela</option><option>Indígena</option><option>Não declarada</option>
+              </select></div>
+            <div class="campo c4"><label for="estado_civil" class="obrigatorio">Estado civil</label>
+              <select id="estado_civil" name="estado_civil" required>
+                <option value="">Selecione</option>
+                <option>Solteiro(a)</option><option>Casado(a)/Mora com companheiro(a)</option>
+                <option>Divorciado(a)/Desquitado(a)/Separado(a)</option><option>Viúvo(a)</option>
+              </select></div>
+            <div class="campo c4"><label for="nacionalidade" class="obrigatorio">Nacionalidade</label>
+              <select id="nacionalidade" name="nacionalidade" required>
+                <option value="">Selecione</option>
+                <option>Brasileiro(a)</option><option>Brasileiro(a) naturalizado(a)</option>
+                <option>Estrangeiro(a)</option><option>Brasileiro(a) nato(a), nascido(a) no exterior</option>
+              </select></div>
+          </div>
+          <p class="dica">Cada CPF só pode ter uma inscrição. Se algum dado estiver diferente do cadastro da Receita Federal, corrija lá antes de se inscrever.</p>
+        </fieldset>
+
+        <fieldset>
+          <legend>Endereço residencial</legend>
+          <div class="campos">
+            <div class="campo c3"><label for="cep" class="obrigatorio">CEP</label><input id="cep" name="cep" type="text" inputmode="numeric" data-mascara="cep" placeholder="00000-000" required minlength="9"></div>
+            <div class="campo c3"><label for="uf" class="obrigatorio">UF</label><select id="uf" name="uf" required></select></div>
+            <div class="campo c6"><label for="municipio" class="obrigatorio">Município</label><input id="municipio" name="municipio" type="text" required></div>
+            <div class="campo c9"><label for="logradouro" class="obrigatorio">Logradouro</label><input id="logradouro" name="logradouro" type="text" required></div>
+            <div class="campo c3"><label for="numero" class="obrigatorio">Número</label><input id="numero" name="numero" type="text" required></div>
+            <div class="campo c6"><label for="complemento">Complemento</label><input id="complemento" name="complemento" type="text"></div>
+            <div class="campo c6"><label for="bairro" class="obrigatorio">Bairro</label><input id="bairro" name="bairro" type="text" required></div>
+          </div>
+          <div class="pergunta">
+            <label class="opcao"><input type="checkbox" name="autoriza_localizacao"> <span>Autorizo o Inep a coletar minha localização</span></label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Contato</legend>
+          <div class="campos">
+            <div class="campo c6"><label for="email" class="obrigatorio">E-mail</label><input id="email" name="email" type="email" required></div>
+            <div class="campo c6"><label for="email_confirmacao" class="obrigatorio">Confirme o e-mail</label><input id="email_confirmacao" name="email_confirmacao" type="email" required></div>
+            <div class="campo c6"><label for="celular">Telefone celular</label><input id="celular" name="celular" type="tel" data-mascara="telefone" placeholder="(00) 00000-0000" minlength="14"></div>
+            <div class="campo c6"><label for="telefone">Telefone fixo</label><input id="telefone" name="telefone" type="tel" data-mascara="telefone" placeholder="(00) 0000-0000" minlength="14"></div>
+          </div>
+          <p class="ajuda">Informe pelo menos um telefone, fixo ou celular.</p>
+        </fieldset>
+      </section>
+
+      <!-- 5. Atendimento especializado e nome social -->
+      <section class="etapa" data-id="atendimento" data-titulo="Atendimento especializado">
+        <div class="etapa-cabecalho">
+          <h2>Atendimento especializado e nome social</h2>
+          <p>Peça aqui se você precisa de alguma adaptação para fazer as provas.</p>
+        </div>
+
+        <div class="pergunta">
+          <span class="rotulo obrigatorio">Você precisa de atendimento especializado?</span>
+          <div class="opcoes em-linha">
+            <label class="opcao"><input type="radio" name="precisa_atendimento" value="sim" required> Sim</label>
+            <label class="opcao"><input type="radio" name="precisa_atendimento" value="nao"> Não</label>
+          </div>
+        </div>
+
+        <div class="oculto" id="bloco_atendimento">
+          <fieldset>
+            <legend>Condição que motiva a solicitação</legend>
+            <div class="opcoes" id="lista_condicoes"></div>
+            <div class="oculto pergunta" id="bloco_aparelho_auditivo">
+              <label class="opcao"><input type="checkbox" name="aparelho_auditivo"> <span>Uso aparelho auditivo ou implante coclear</span></label>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Recursos de acessibilidade</legend>
+            <div class="opcoes" id="lista_recursos"></div>
+          </fieldset>
+          <div class="pergunta">
+            <label class="opcao"><input type="checkbox" name="laudo_anexado"> <span>Inseri documento que comprova a condição (PDF, PNG ou JPG, até 2 MB)</span></label>
+          </div>
+          <p class="dica">O documento deve ter o nome completo do participante, o diagnóstico ou o código CID e a assinatura do profissional com registro no conselho. Sem documento aprovado, não há tempo adicional.</p>
+        </div>
+
+        <fieldset>
+          <legend>Tratamento pelo nome social</legend>
+          <div class="pergunta">
+            <label class="opcao"><input type="checkbox" name="usa_nome_social"> <span>Desejo ser tratado(a) pelo nome social cadastrado na Receita Federal em todas as fases do Exame</span></label>
+          </div>
+          <p class="dica">O nome social vem do cadastro do CPF na Receita Federal e não pode ser alterado no sistema de inscrição.</p>
+        </fieldset>
+      </section>
+
+      <!-- 6. Língua estrangeira -->
+      <section class="etapa" data-id="lingua" data-titulo="Língua estrangeira">
+        <div class="etapa-cabecalho">
+          <h2>Língua estrangeira</h2>
+          <p>Você vai responder só às questões da língua escolhida. Dá para alterar até o fim do período de inscrição.</p>
+        </div>
+        <div class="pergunta">
+          <span class="rotulo obrigatorio">Em qual língua você vai fazer a prova de Língua Estrangeira?</span>
+          <div class="opcoes em-linha">
+            <label class="opcao"><input type="radio" name="lingua" value="Inglês" required> Inglês</label>
+            <label class="opcao"><input type="radio" name="lingua" value="Espanhol"> Espanhol</label>
+          </div>
+          <p class="dica">Escolha a língua em que você se sente mais seguro(a). As questões de língua estrangeira fazem parte da prova de Linguagens.</p>
+        </div>
+      </section>
+
+      <!-- 7. Ensino médio -->
+      <section class="etapa" data-id="escolaridade" data-titulo="Ensino médio">
+        <div class="etapa-cabecalho">
+          <h2>Situação do ensino médio</h2>
+          <p>Essa informação não pode ser alterada depois que a inscrição for concluída.</p>
+        </div>
+
+        <div class="pergunta">
+          <span class="rotulo obrigatorio">Qual é a sua situação em relação ao ensino médio?</span>
+          <div class="opcoes">
+            <label class="opcao"><input type="radio" name="situacao_em" value="concluido" required> Já concluí o ensino médio</label>
+            <label class="opcao"><input type="radio" name="situacao_em" value="concluirei_2026"> Estou cursando e concluirei o ensino médio em 2026</label>
+            <label class="opcao"><input type="radio" name="situacao_em" value="apos_2026"> Estou cursando e concluirei o ensino médio após 2026</label>
+            <label class="opcao"><input type="radio" name="situacao_em" value="nao_cursando"> Não concluí e não estou cursando o ensino médio</label>
+          </div>
+        </div>
+
+        <div class="campos oculto" id="bloco_concluido">
+          <div class="campo c4"><label for="ano_conclusao" class="obrigatorio">Ano de conclusão</label>
+            <input id="ano_conclusao" name="ano_conclusao" type="number" min="1950" max="2025" required></div>
+          <div class="campo c4"><label for="tipo_escola" class="obrigatorio">Tipo de escola</label>
+            <select id="tipo_escola" name="tipo_escola" required><option value="">Selecione</option><option>Pública</option><option>Privada</option></select></div>
+        </div>
+
+        <div class="oculto" id="bloco_cursando">
+          <div class="campos">
+            <div class="campo c4"><label for="escola_municipio" class="obrigatorio">Município da escola</label>
+              <select id="escola_municipio" name="escola_municipio" required></select></div>
+            <div class="campo c8"><label for="escola" class="obrigatorio">Escola</label>
+              <select id="escola" name="escola" required><option value="">Selecione o município primeiro</option></select></div>
+            <div class="campo c6"><label for="tipo_ensino" class="obrigatorio">Tipo de ensino</label>
+              <select id="tipo_ensino" name="tipo_ensino" required>
+                <option value="">Selecione</option><option>Ensino regular</option><option>Educação de Jovens e Adultos (EJA)</option><option>Educação especial</option>
+              </select></div>
+          </div>
+          <p class="dica">Para concluintes da rede pública, os dados da escola já aparecem preenchidos no site oficial.</p>
+        </div>
+
+        <div class="caixa alerta oculto" id="bloco_treineiro">
+          <p><strong>Você participará como treineiro(a).</strong> A nota serve só para autoavaliação e <strong>não pode ser usada</strong> no Sisu, no Prouni nem no Fies.</p>
+        </div>
+
+        <div class="oculto" id="bloco_certificacao">
+          <div class="pergunta">
+            <span class="rotulo obrigatorio">Pretende utilizar os resultados do Enem 2026 para obter o certificado de conclusão do ensino médio?</span>
+            <div class="opcoes em-linha">
+              <label class="opcao"><input type="radio" name="certificacao" value="sim" required> Sim</label>
+              <label class="opcao"><input type="radio" name="certificacao" value="nao"> Não</label>
+            </div>
+          </div>
+          <div id="aviso_certificacao"></div>
+          <p class="dica">Para a certificação é preciso ter 18 anos completos até o primeiro dia de prova e tirar pelo menos 450 pontos em cada área e 500 na redação. O certificado é emitido pelo Instituto Federal de São Paulo (IFSP).</p>
+        </div>
+      </section>
+
+      <!-- 8. Local de prova -->
+      <section class="etapa" data-id="local" data-titulo="Local de prova">
+        <div class="etapa-cabecalho">
+          <h2>Local de prova</h2>
+          <p>Indique a unidade da federação e o município onde deseja fazer o Exame.</p>
+        </div>
+        <div class="campos">
+          <div class="campo c4"><label for="prova_uf" class="obrigatorio">UF</label><select id="prova_uf" name="prova_uf" required></select></div>
+          <div class="campo c8"><label for="prova_municipio" class="obrigatorio">Município</label>
+            <input id="prova_municipio" name="prova_municipio" type="text" list="municipios_rs" required>
+            <datalist id="municipios_rs"></datalist></div>
+        </div>
+        <p class="dica">O endereço exato da prova só aparece no Cartão de Confirmação da Inscrição, divulgado perto das provas.</p>
+      </section>
+
+      <!-- 9. Questionário socioeconômico -->
+      <section class="etapa" data-id="questionario" data-titulo="Questionário socioeconômico">
+        <div class="etapa-cabecalho">
+          <h2>Questionário socioeconômico</h2>
+          <p>Responda com informações verdadeiras. Depois da inscrição concluída, as respostas não podem ser alteradas.</p>
+        </div>
+        <div id="lista_questionario"></div>
+      </section>
+
+      <!-- 10. Conferência -->
+      <section class="etapa" data-id="conferencia" data-titulo="Conferência" data-botao-proxima="Concluir inscrição ✓">
+        <div class="etapa-cabecalho">
+          <h2>Confira sua inscrição</h2>
+          <p>Revise tudo antes de concluir. A situação do ensino médio e o questionário não podem ser alterados depois.</p>
+        </div>
+        <div class="resumo" id="resumo_conferencia"></div>
+        <div class="pergunta">
+          <label class="opcao"><input type="checkbox" name="declaracao_veracidade" data-nome="Declaração" required>
+            <span class="rotulo obrigatorio">Declaro que li o edital do Enem 2026, que concordo com suas regras e que as informações prestadas são verdadeiras.</span></label>
+        </div>
+      </section>
+
+      <!-- 11. Comprovante -->
+      <section class="etapa" data-id="comprovante" data-titulo="Comprovante" data-sem-navegacao>
+        <div class="etapa-cabecalho">
+          <h2>Inscrição concluída</h2>
+          <p>Anote o número de inscrição. Acompanhe a situação na Página do Participante.</p>
+        </div>
+        <div class="comprovante resumo" id="comprovante"></div>
+
+        <div class="nao-imprimir" id="bloco_pagamento"></div>
+
+        <div class="navegacao-etapa nao-imprimir">
+          <button type="button" class="botao secundario" id="btn_alterar">Alterar inscrição</button>
+          <button type="button" class="botao" onclick="window.print()">Imprimir comprovante</button>
+        </div>
+
+        <div class="nao-imprimir">
+          <h3>Próximas etapas</h3>
+          <ol>
+            <li><strong>Cartão de Confirmação da Inscrição:</strong> perto das provas, o Inep informa o número de inscrição, a data, a hora e o endereço do local de prova, os atendimentos aprovados e a língua estrangeira.</li>
+            <li><strong>Horários:</strong> portões abrem às 12h e fecham às 13h; provas começam às 13h30 (horário de Brasília).</li>
+            <li><strong>1º dia (8/11):</strong> Linguagens, Ciências Humanas e Redação.</li>
+            <li><strong>2º dia (15/11):</strong> Ciências da Natureza e Matemática.</li>
+          </ol>
+          <div class="navegacao-etapa">
+            <a class="botao secundario" href="index.html">Voltar ao início</a>
+            <button type="button" class="botao perigo" onclick="location.reload()">Nova simulação (apaga tudo)</button>
+          </div>
+        </div>
+      </section>
+    </form>
+  </main>
+
+  <footer class="rodape">
+    <div class="rodape-conteudo">
+      <div class="rodape-instituicao">
+        <strong>Ministério da Educação</strong><br>
+        Secretaria de Educação Profissional e Tecnológica<br>
+        Instituto Federal de Educação, Ciência e Tecnologia do Rio Grande do Sul<br>
+        <strong>Campus Rolante</strong>
+      </div>
+      <div class="rodape-projeto">
+        <strong>Projeto de extensão</strong><br>
+        Apoio à Inscrição em Processos Seletivos para a Educação Superior e Bolsas<br>
+        Em parceria com o Rotary Club de Santo Antônio da Patrulha
+      </div>
+    </div>
+    <p class="rodape-aviso">
+      Simulador educativo, sem vínculo com o MEC, o Inep ou o FNDE. As inscrições oficiais do Enem são feitas
+      somente na Página do Participante do Inep (enem.inep.gov.br).
+    </p>
+    <p class="rodape-ano">© 2026 IFRS Campus Rolante</p>
+  </footer>
+
+  <script src="js/dados.js?v=20261113"></script>
+  <script src="js/comum.js?v=20261113"></script>
+  <script src="js/enem.js?v=20261113"></script>
+</body>
+</html>

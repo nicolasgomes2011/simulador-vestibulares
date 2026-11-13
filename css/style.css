@@ -19,6 +19,8 @@
   --laranja-escuro: #b44f05;
   --roxo: #5b4b9a;
   --roxo-escuro: #43367a;
+  --vinho: #9b2f4d;
+  --vinho-escuro: #74213a;
 
   --erro: #b3261e;
   --erro-fundo: #fdecea;
@@ -37,6 +39,7 @@
 body.programa-sisu   { --destaque: var(--teal);    --destaque-escuro: var(--teal-escuro); }
 body.programa-prouni { --destaque: var(--laranja); --destaque-escuro: var(--laranja-escuro); }
 body.programa-fies   { --destaque: var(--roxo);    --destaque-escuro: var(--roxo-escuro); }
+body.programa-enem   { --destaque: var(--vinho);   --destaque-escuro: var(--vinho-escuro); }
 
 * { box-sizing: border-box; }
 
@@ -151,8 +154,11 @@ h3 { font-size: 1.15rem; margin: 1.5rem 0 .75rem; }
 
 .grade-programas {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 1.25rem;
+}
+@media (max-width: 1050px) {
+  .grade-programas { grid-template-columns: repeat(2, 1fr); }
 }
 .programa {
   display: flex;
@@ -167,6 +173,7 @@ h3 { font-size: 1.15rem; margin: 1.5rem 0 .75rem; }
 .programa-sisu-card { --cor-programa: var(--teal); }
 .programa-prouni-card { --cor-programa: var(--laranja); }
 .programa-fies-card { --cor-programa: var(--roxo); }
+.programa-enem-card { --cor-programa: var(--vinho); }
 
 .lista-cuidados { margin-top: 1.5rem; }
 .lista-cuidados ul { margin: 0; padding-left: 1.2rem; }
@@ -204,11 +211,14 @@ h3 { font-size: 1.15rem; margin: 1.5rem 0 .75rem; }
   background: #fff;
   font-weight: 700;
 }
+.etapas-indicador .etapa-texto { display: flex; flex-direction: column; }
+.etapas-indicador .etapa-de { display: none; font-weight: 400; opacity: .85; }
 .etapas-indicador li.atual { background: var(--destaque); color: #fff; font-weight: 600; }
 .etapas-indicador li.atual::before { color: var(--destaque); }
 .etapas-indicador li.feita { background: #dcefe9; color: var(--texto); }
 body.programa-prouni .etapas-indicador li.feita { background: #fbe3d1; }
 body.programa-fies .etapas-indicador li.feita { background: #e5e0f5; }
+body.programa-enem .etapas-indicador li.feita { background: #f3dde4; }
 
 /* ---------- Etapas do formulário ---------- */
 .etapa { display: none; }
@@ -228,6 +238,7 @@ fieldset {
   border-radius: var(--raio);
   padding: 1rem 1.25rem 1.25rem;
   margin: 0 0 1.25rem;
+  min-width: 0; /* sem isso, tabelas largas esticam o fieldset e quebram a tela no celular */
 }
 legend {
   font-weight: 700;
@@ -343,16 +354,6 @@ body.mostrar-dicas .dica { display: block; }
 
 /* ---------- Login simulado ---------- */
 .login-simulado { max-width: 520px; margin: 0 auto; text-align: left; }
-.login-simulado .selo-login {
-  display: inline-block;
-  font-size: .75rem;
-  font-weight: 700;
-  letter-spacing: .05em;
-  background: #ebe7de;
-  border-radius: 4px;
-  padding: .15rem .5rem;
-  margin-bottom: .75rem;
-}
 
 /* ---------- Tabelas ---------- */
 .tabela-rolagem { overflow-x: auto; margin-bottom: 1rem; }
@@ -486,15 +487,79 @@ tr.excluida td { color: var(--texto-suave); text-decoration: line-through; }
 
 .oculto { display: none !important; }
 
-/* ---------- Telas pequenas ---------- */
+/* ---------- Telas pequenas (celular) ---------- */
 @media (max-width: 720px) {
+  body { overflow-wrap: break-word; }
+  h1 { font-size: 1.45rem; }
+  h2 { font-size: 1.2rem; }
+  main { padding: 1rem .75rem 2rem; }
+  .cartao { padding: 1rem; }
+  fieldset { padding: .75rem .85rem 1rem; }
+
+  /* Aviso fixo mais curto, para não ocupar meia tela */
+  .aviso-simulacao { font-size: .78rem; padding: .4rem .75rem; }
+  .aviso-simulacao .aviso-extra { display: none; }
+
+  .topo-conteudo { padding: .6rem .75rem; gap: .5rem; }
+  .marca-titulo { font-size: 1rem; }
+  .painel-apresentador .rotulo-painel,
+  .painel-apresentador [data-painel="menor"],
+  .painel-apresentador [data-painel="maior"] { display: none; }
+
+  /* Indicador de etapas: só a etapa atual */
+  .etapas-indicador li { display: none; }
+  .etapas-indicador li.atual { display: flex; flex-basis: 100%; font-size: .9rem; }
+  .etapas-indicador li.atual::before { display: none; } /* o contador ignora etapas ocultas; "Etapa X de N" já informa */
+  .etapas-indicador li.atual .etapa-de { display: block; font-size: .78rem; }
+
+  .grade-programas { grid-template-columns: 1fr; }
   .campo.c6, .campo.c4, .campo.c3, .campo.c8, .campo.c9 { grid-column: span 12; }
   .oferta { grid-template-columns: 1fr; }
   .resumo dl { grid-template-columns: 1fr; }
   .resumo dt { margin-top: .4rem; }
-  h1 { font-size: 1.45rem; }
-  .cartao { padding: 1rem; }
-  .etapas-indicador li { flex-basis: 45%; }
+  .comprovante { padding: 1rem; }
+  .comprovante::before { font-size: 1.8rem; }
+
+  /* Botões de navegação empilhados, ação principal em cima */
+  .navegacao-etapa { flex-direction: column-reverse; gap: .6rem; }
+  .navegacao-etapa > span:empty { display: none; }
+  .navegacao-etapa .botao { width: 100%; }
+
+  /* Tabelas viram cartões: cada linha é um bloco com rótulos */
+  .tabela-empilhavel thead { display: none; }
+  .tabela-empilhavel, .tabela-empilhavel tbody, .tabela-empilhavel tr, .tabela-empilhavel td { display: block; width: 100%; }
+  .tabela-empilhavel tr {
+    border: 1px solid var(--borda);
+    border-radius: 8px;
+    padding: .5rem .75rem;
+    margin-bottom: .6rem;
+    background: #fff;
+  }
+  .tabela-empilhavel td {
+    border: 0;
+    padding: .2rem 0;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    text-align: right;
+  }
+  .tabela-empilhavel td::before {
+    content: attr(data-rotulo);
+    font-weight: 600;
+    color: var(--texto-suave);
+    text-align: left;
+  }
+  .tabela-empilhavel td:empty, .tabela-empilhavel td.acao-linha:empty { display: none; }
+  .tabela-empilhavel tr.excluida { opacity: .6; }
+  .tabela-empilhavel tr.excluida td { text-decoration: none; }
+
+  /* Textos longos e campos: rótulo em cima do valor */
+  .rotulo-acima td, .tabela-grupo td { display: block; text-align: left; padding: .3rem 0; }
+  .rotulo-acima td::before, .tabela-grupo td::before { display: block; margin-bottom: .2rem; font-size: .85rem; }
+  .tabela-grupo input, .tabela-grupo select,
+  .tabela-grupo input[data-campo="nome"] { min-width: 0; width: 100%; }
+  .tabela-grupo .botao-painel { margin-top: .3rem; }
+  .tabela-grupo td.acao-linha { text-align: right; }
 }
 
 /* ---------- Impressão do comprovante ---------- */

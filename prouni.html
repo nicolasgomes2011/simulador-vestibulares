@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Simulador Prouni</title>
   <meta name="description" content="Simulação educativa da inscrição no Prouni, com dados fictícios.">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=20261113">
 </head>
 <body class="programa-prouni">
   <div class="aviso-simulacao" role="note">
     <strong>SIMULADOR EDUCATIVO, NÃO É O SITE OFICIAL.</strong>
-    Use apenas dados fictícios. Nenhum dado é enviado ou armazenado.
+    <span class="aviso-extra">Use apenas dados fictícios. Nenhum dado é enviado ou armazenado.</span>
   </div>
 
   <header class="topo">
@@ -64,13 +64,12 @@
       </section>
 
       <!-- 2. Login gov.br (ilustrativo) -->
-      <section class="etapa" data-id="login" data-titulo="Acesso gov.br" data-botao-proxima="Entrar (simulado) →">
+      <section class="etapa" data-id="login" data-titulo="Acesso gov.br" data-botao-proxima="Entrar →">
         <div class="etapa-cabecalho">
           <h2>Acesso com a conta gov.br</h2>
           <p>No site oficial, o login é feito com CPF e senha da conta gov.br.</p>
         </div>
         <div class="login-simulado">
-          <span class="selo-login">LOGIN ILUSTRATIVO</span>
           <div class="campos">
             <div class="campo">
               <label for="login_cpf" class="obrigatorio">CPF</label>
@@ -78,9 +77,6 @@
             </div>
           </div>
           <p><button type="button" class="botao secundario pequeno" data-gerar-cpf="login_cpf">Gerar CPF fictício</button></p>
-          <div class="caixa alerta">
-            <p>Aqui <strong>não existe campo de senha</strong>, de propósito. Nunca digite sua senha gov.br em sites que não sejam do governo (endereço terminado em <strong>.gov.br</strong>).</p>
-          </div>
         </div>
       </section>
 
@@ -178,15 +174,6 @@
             <label class="opcao"><input type="radio" name="pcd" value="nao"> Não</label>
           </div>
         </div>
-        <div class="campos oculto" id="bloco_deficiencia">
-          <div class="campo c6"><label for="tipo_deficiencia" class="obrigatorio">Tipo de deficiência</label>
-            <select id="tipo_deficiencia" name="tipo_deficiencia" required>
-              <option value="">Selecione</option>
-              <option>Física</option><option>Auditiva</option><option>Visual</option>
-              <option>Intelectual</option><option>Múltipla</option><option>Transtorno do espectro autista</option>
-            </select></div>
-        </div>
-
         <div class="pergunta">
           <span class="rotulo obrigatorio">Você é professor(a) da rede pública de ensino, no efetivo exercício do magistério da educação básica, integrante do quadro de pessoal permanente da instituição?</span>
           <div class="opcoes em-linha">
@@ -198,13 +185,13 @@
         <div class="pergunta">
           <span class="rotulo obrigatorio">Como você cursou o ensino médio?</span>
           <div class="opcoes">
-            <label class="opcao"><input type="radio" name="ensino_medio" value="publica" required> Integralmente em escola da rede pública</label>
-            <label class="opcao"><input type="radio" name="ensino_medio" value="privada_bolsa_integral"> Integralmente em instituição privada, na condição de bolsista integral da própria escola</label>
-            <label class="opcao"><input type="radio" name="ensino_medio" value="parcial_bolsa_integral"> Parcialmente em escola da rede pública e parcialmente em instituição privada, na condição de bolsista integral</label>
-            <label class="opcao"><input type="radio" name="ensino_medio" value="parcial_sem_bolsa"> Parcialmente em escola da rede pública e parcialmente em instituição privada, na condição de bolsista parcial ou sem bolsa</label>
-            <label class="opcao"><input type="radio" name="ensino_medio" value="privada_sem_bolsa"> Integralmente em instituição privada, na condição de bolsista parcial ou sem bolsa</label>
+            <label class="opcao"><input type="radio" name="ensino_medio" value="publica" required> <span>Integralmente em escola da rede pública</span></label>
+            <label class="opcao"><input type="radio" name="ensino_medio" value="privada_bolsa_integral"> <span>Integralmente em instituição privada, na condição de bolsista integral da respectiva instituição</span></label>
+            <label class="opcao"><input type="radio" name="ensino_medio" value="parcial_bolsa_integral"> <span>Parcialmente em escola da rede pública e parcialmente em instituição privada, na condição de bolsista integral da respectiva instituição</span></label>
+            <label class="opcao"><input type="radio" name="ensino_medio" value="parcial_sem_bolsa"> <span>Parcialmente em escola da rede pública e parcialmente em instituição privada, na condição de bolsista parcial da respectiva instituição ou sem a condição de bolsista</span></label>
+            <label class="opcao"><input type="radio" name="ensino_medio" value="privada_sem_bolsa"> <span>Integralmente em instituição privada, na condição de bolsista parcial da respectiva instituição ou sem a condição de bolsista</span></label>
           </div>
-          <p class="dica">Desde 2022 (Lei nº 14.350), quem estudou em escola particular sem bolsa também pode participar, mas só concorre às bolsas que sobrarem depois dos candidatos de escola pública e de bolsistas integrais.</p>
+          <p class="dica">Todas as situações podem concorrer, mas há ordem de prioridade: primeiro quem estudou integralmente em escola pública e, por último, quem estudou integralmente em escola privada sem bolsa integral.</p>
         </div>
 
         <div class="campos">
@@ -234,7 +221,6 @@
         <div id="opcoes_escolhidas"></div>
 
         <h3>Buscar cursos</h3>
-        <p class="ajuda">Instituições, cursos, bolsas e notas de corte desta lista são fictícios.</p>
         <div class="filtros">
           <div class="campo"><label for="f_curso">Curso</label><input id="f_curso" type="search" placeholder="Ex.: Enfermagem"></div>
           <div class="campo"><label for="f_ies">Instituição</label><select id="f_ies"></select></div>
@@ -309,8 +295,8 @@
     <p class="rodape-ano">© 2026 IFRS Campus Rolante</p>
   </footer>
 
-  <script src="js/dados.js"></script>
-  <script src="js/comum.js"></script>
-  <script src="js/prouni.js"></script>
+  <script src="js/dados.js?v=20261113"></script>
+  <script src="js/comum.js?v=20261113"></script>
+  <script src="js/prouni.js?v=20261113"></script>
 </body>
 </html>

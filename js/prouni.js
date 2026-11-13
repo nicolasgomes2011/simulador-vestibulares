@@ -13,9 +13,9 @@ const estado = {
 
 const NOMES_BOLSA = { integral: 'Bolsa integral (100%)', parcial: 'Bolsa parcial (50%)' };
 const NOMES_MODALIDADE = {
-  ampla: 'Ampla concorrência',
-  ppi: 'Políticas afirmativas: autodeclarados indígenas, pretos ou pardos',
-  pcd: 'Políticas afirmativas: pessoas com deficiência'
+  ampla: 'Bolsas destinadas à ampla concorrência',
+  pcd: 'Bolsas destinadas a políticas afirmativas: pessoas com deficiência',
+  ppi: 'Bolsas destinadas a políticas afirmativas: autodeclarados indígenas, pardos ou pretos'
 };
 const DIFERENCA_CORTE_COTAS = 30; // fictício
 
@@ -96,11 +96,6 @@ function validarDados(etapa) {
   }
   return erros;
 }
-
-/* ---------- Etapa: perfil ---------- */
-document.addEventListener('change', (e) => {
-  if (e.target.name === 'pcd') $('#bloco_deficiencia').classList.toggle('oculto', e.target.value !== 'sim');
-});
 
 /* ---------- Etapa: cursos ---------- */
 function ofertasProuni() {
@@ -258,7 +253,7 @@ function paresPerfil() {
   const melhor = melhorEdicao();
   return [
     ['Raça/cor', lerValor('raca_cor')],
-    ['Pessoa com deficiência', lerValor('pcd') === 'sim' ? `Sim (${lerValor('tipo_deficiencia')})` : 'Não'],
+    ['Pessoa com deficiência', lerValor('pcd') === 'sim' ? 'Sim' : 'Não'],
     ['Professor(a) da rede pública', ehProfessor() ? 'Sim' : 'Não'],
     ['Ensino médio', TEXTO_ENSINO_MEDIO[lerValor('ensino_medio')]],
     ['Ano de conclusão', lerValor('ano_conclusao')],
@@ -326,7 +321,7 @@ function simularResultado() {
 $('#btn_resultado').addEventListener('click', simularResultado);
 $('#resultado').addEventListener('click', (e) => {
   if (e.target.id !== 'btn_lista_espera') return;
-  $('#resultado').innerHTML = '<div class="caixa ok"><p>Interesse na lista de espera registrado (simulação). Acompanhe o resultado no portal e na instituição.</p></div>';
+  $('#resultado').innerHTML = '<div class="caixa ok"><p>Interesse na lista de espera registrado. Acompanhe o resultado no portal e na instituição.</p></div>';
 });
 
 /* ---------- Dados fictícios para a demonstração ---------- */

@@ -243,7 +243,7 @@ function renderizarOpcoes() {
         <input type="checkbox" data-acao-propria="${a.tipo}" data-opcao="${i}" ${opcao.acoes.includes(a.tipo) ? 'checked' : ''}>
         <span>Desejo concorrer à ação afirmativa própria da instituição (${a.tipo === 'B' ? 'bônus' : 'reserva de vagas'}): ${escaparHtml(a.descricao)}</span></label>`).join('');
     const linhas = modalidadesDaOpcao(opcao).map((m) =>
-      `<tr><td><strong>${m}</strong></td><td>${escaparHtml(nomeModalidade(m, o))}</td><td class="num">${vagas[m] ?? '-'}</td></tr>`).join('');
+      `<tr><td data-rotulo="Código"><strong>${m}</strong></td><td data-rotulo="Modalidade">${escaparHtml(nomeModalidade(m, o))}</td><td class="num" data-rotulo="Vagas">${vagas[m] ?? '-'}</td></tr>`).join('');
     return `<div class="opcao-escolhida">
       <div class="titulo-opcao">${titulo}</div>
       <h4>${escaparHtml(o.curso)} · ${escaparHtml(o.grau)}</h4>
@@ -251,7 +251,7 @@ function renderizarOpcoes() {
       <p>Nota do Enem considerada: <strong>${Formatar.nota(notaComBonus(opcao, nota.nota))}</strong> (Enem ${nota.edicao}${opcao.acoes.includes('B') ? ', com bônus' : ''}) · Pesos: ${pesosTexto(o.pesos)}</p>
       ${acoes ? `<div class="pergunta">${acoes}</div>` : ''}
       <p class="rotulo">Modalidades em que você está inscrito(a) neste curso:</p>
-      <div class="tabela-rolagem"><table><thead><tr><th>Código</th><th>Modalidade</th><th class="num">Vagas</th></tr></thead><tbody>${linhas}</tbody></table></div>
+      <div class="tabela-rolagem"><table class="tabela-empilhavel rotulo-acima"><thead><tr><th>Código</th><th>Modalidade</th><th class="num">Vagas</th></tr></thead><tbody>${linhas}</tbody></table></div>
       <button type="button" class="botao perigo pequeno" data-remover="${i}">Remover ${i + 1}ª opção</button>
     </div>`;
   }).join('');
@@ -364,10 +364,10 @@ function situacaoNaOpcao(opcao) {
 function renderizarClassificacao() {
   $('#classificacao_parcial').innerHTML = estado.opcoes.filter(Boolean).map((opcao, i) => {
     const linhas = situacaoNaOpcao(opcao).map((s) => `<tr>
-      <td><strong>${s.modalidade}</strong></td><td class="num">${Formatar.nota(s.corte)}</td><td class="num">${Formatar.nota(s.nota)}</td>
-      <td>${s.dentro ? '✅ Dentro das vagas' : '❌ Fora das vagas'}</td></tr>`).join('');
+      <td data-rotulo="Modalidade"><strong>${s.modalidade}</strong></td><td class="num" data-rotulo="Nota de corte parcial">${Formatar.nota(s.corte)}</td><td class="num" data-rotulo="Sua nota">${Formatar.nota(s.nota)}</td>
+      <td data-rotulo="Situação parcial">${s.dentro ? '✅ Dentro das vagas' : '❌ Fora das vagas'}</td></tr>`).join('');
     return `<p class="rotulo">${i + 1}ª opção · ${escaparHtml(opcao.oferta.curso)} · ${escaparHtml(opcao.oferta.sigla)}</p>
-      <div class="tabela-rolagem"><table><thead><tr><th>Modalidade</th><th class="num">Nota de corte parcial</th><th class="num">Sua nota</th><th>Situação parcial</th></tr></thead>
+      <div class="tabela-rolagem"><table class="tabela-empilhavel"><thead><tr><th>Modalidade</th><th class="num">Nota de corte parcial</th><th class="num">Sua nota</th><th>Situação parcial</th></tr></thead>
       <tbody>${linhas}</tbody></table></div>`;
   }).join('');
 }
@@ -397,7 +397,7 @@ $('#resultado').addEventListener('click', (e) => {
   if (e.target.id !== 'btn_lista_espera') return;
   const i = Number(lerValor('lista_espera'));
   const opcao = estado.opcoes.filter(Boolean)[i];
-  $('#resultado').innerHTML = `<div class="caixa ok"><p>Interesse na lista de espera confirmado (simulação) para: <strong>${escaparHtml(opcao.oferta.curso)} · ${escaparHtml(opcao.oferta.ies)}</strong>.</p>
+  $('#resultado').innerHTML = `<div class="caixa ok"><p>Interesse na lista de espera confirmado para: <strong>${escaparHtml(opcao.oferta.curso)} · ${escaparHtml(opcao.oferta.ies)}</strong>.</p>
     <p>As convocações da lista de espera são feitas por cada instituição. Acompanhe o site e os canais oficiais da instituição, não o site do Sisu.</p></div>`;
 });
 
