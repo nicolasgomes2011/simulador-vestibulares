@@ -70,7 +70,7 @@ function entrarDados(etapa) {
 function validarDados(etapa) {
   const erros = [];
   if (!melhorEdicao()) erros.push('Enem: requisitos de nota não atendidos.');
-  if (lerValor('email', etapa).toLowerCase() !== lerValor('email_confirmacao', etapa).toLowerCase()) {
+  if (emailsDiferentes(etapa)) {
     erros.push('Confirme o e-mail: os dois e-mails precisam ser iguais.');
   }
   return erros;
@@ -225,10 +225,6 @@ function entrarCursos() {
   renderizarOfertas();
 }
 
-function validarCursos() {
-  return estado.opcoes[0] ? [] : ['1ª opção: escolha pelo menos um curso.'];
-}
-
 /* ---------- Conferência e comprovante ---------- */
 const TEXTO_ENSINO_MEDIO = {
   publica: 'Integralmente em escola pública',
@@ -249,12 +245,11 @@ function paresDados() {
 
 function paresPerfil() {
   const melhor = melhorEdicao();
-  const simNao = (nome) => (lerValor(nome) === 'sim' ? 'Sim' : 'Não');
   return [
     ['Etnia/cor', lerValor('raca_cor')],
-    ['Quilombola', simNao('quilombola')],
-    ['Pessoa com deficiência', simNao('pcd')],
-    ['Concluiu o ensino superior', simNao('superior_concluido')],
+    ['Quilombola', simNao(lerValor('quilombola'))],
+    ['Pessoa com deficiência', simNao(lerValor('pcd'))],
+    ['Concluiu o ensino superior', simNao(lerValor('superior_concluido'))],
     ['Ensino médio', TEXTO_ENSINO_MEDIO[lerValor('ensino_medio')]],
     ['Enem considerado', `${melhor.edicao} · média ${Formatar.nota(melhor.media)}`]
   ];
@@ -284,7 +279,7 @@ function entrarConferencia() {
     '<h3>Perfil</h3>' + listaDefinicaoHtml(paresPerfil()) +
     '<h3>Grupo familiar (renda bruta mensal)</h3>' + listaDefinicaoHtml(grupo.resumo()) +
     '<h3>Modalidade e tipo de vaga</h3>' + listaDefinicaoHtml(paresModalidade()) +
-    estado.opcoes.filter(Boolean).map(opcaoHtml).join('');
+    opcoesHtml(estado.opcoes.filter(Boolean), opcaoHtml);
 }
 
 function entrarComprovante() {
@@ -296,7 +291,7 @@ function entrarComprovante() {
     </div>
     ${listaDefinicaoHtml(paresDados().filter(([r]) => ['Nome completo', 'CPF', 'E-mail'].includes(r)))}
     ${listaDefinicaoHtml([['Renda per capita', Formatar.moeda(grupo.totais().perCapita)], ...paresModalidade()])}
-    ${estado.opcoes.filter(Boolean).map(opcaoHtml).join('')}`;
+    ${opcoesHtml(estado.opcoes.filter(Boolean), opcaoHtml)}`;
   $('#resultado').innerHTML = '';
 }
 
@@ -304,11 +299,15 @@ function simularResultado() {
   const nota = melhorEdicao().media;
   const cota = lerValor('cota');
   const opcoes = estado.opcoes.filter(Boolean);
+  if (!opcoes.length) {
+    $('#resultado').innerHTML = AVISO_SEM_CURSO;
+    return;
+  }
   for (let i = 0; i < opcoes.length; i++) {
     const corte = opcoes[i].oferta.fies.corte;
     let via = null;
     if (nota >= corte) via = 'ampla concorrência';
-    else if (cota !== 'ampla' && nota >= corte - DIFERENCA_CORTE.cota) via = MODALIDADES_FIES[cota].toLowerCase();
+    else if (cota && cota !== 'ampla' && nota >= corte - DIFERENCA_CORTE.cota) via = MODALIDADES_FIES[cota].toLowerCase();
     else if (querFiesSocial() && nota >= corte - DIFERENCA_CORTE.social) via = 'vagas Fies Social';
     if (via) {
       const percentual = querFiesSocial()
@@ -385,8 +384,7 @@ const assistente = new Assistente({
       return erros;
     },
     dados: validarDados,
-    grupo: validarGrupo,
-    cursos: validarCursos
+    grupo: validarGrupo
   }
 });
 

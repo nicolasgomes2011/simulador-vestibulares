@@ -117,7 +117,7 @@ $('#usa_nome_social').addEventListener('change', (e) => {
 
 function validarCadastro(etapa) {
   const erros = [];
-  if (lerValor('email', etapa) && lerValor('email', etapa).toLowerCase() !== lerValor('email_confirmacao', etapa).toLowerCase()) {
+  if (emailsDiferentes(etapa)) {
     erros.push('Confirme o e-mail: os dois e-mails precisam ser iguais.');
   }
   return erros;
@@ -282,14 +282,9 @@ function entrarCursos() {
   renderizarOfertas();
 }
 
-function validarCursos() {
-  return estado.opcoes[0] ? [] : ['1ª opção: escolha pelo menos um curso.'];
-}
-
 /* ---------- Conferência e comprovante ---------- */
 function paresCandidato() {
-  const endereco = [lerValor('logradouro'), lerValor('numero'), lerValor('complemento'), lerValor('bairro'),
-    `${lerValor('municipio')}/${lerValor('uf')}`, `CEP ${lerValor('cep')}`].filter(Boolean).join(', ');
+  const endereco = enderecoDoFormulario();
   return [
     ['Nome', lerValor('nome')],
     ['Nome social', lerValor('usa_nome_social') ? lerValor('nome_social') : ''],
@@ -305,7 +300,6 @@ function paresCandidato() {
 
 function paresQuestionario() {
   const r = respostasQuestionario();
-  const simNao = (v) => (v === 'sim' ? 'Sim' : 'Não');
   return [
     ['Ensino médio integralmente em escola pública', simNao(r.escolaPublica)],
     ['Cor/etnia', r.cor],
@@ -335,7 +329,7 @@ function entrarConferencia() {
   $('#resumo_conferencia').innerHTML =
     '<h3>Dados do candidato</h3>' + listaDefinicaoHtml(paresCandidato()) +
     '<h3>Questionário socioeconômico</h3>' + listaDefinicaoHtml(paresQuestionario()) +
-    estado.opcoes.filter(Boolean).map(opcaoHtml).join('');
+    opcoesHtml(estado.opcoes.filter(Boolean), opcaoHtml);
 }
 
 function entrarComprovante() {
@@ -347,7 +341,7 @@ function entrarComprovante() {
       <div><span class="numero">Nº ${estado.numeroInscricao}</span><br><span class="ajuda">Confirmada em ${estado.confirmadaEm}</span></div>
     </div>
     ${listaDefinicaoHtml(paresCandidato().filter(([r]) => ['Nome', 'Nome social', 'CPF', 'E-mail'].includes(r)))}
-    ${estado.opcoes.filter(Boolean).map(opcaoHtml).join('')}`;
+    ${opcoesHtml(estado.opcoes.filter(Boolean), opcaoHtml)}`;
   renderizarClassificacao();
   $('#resultado').innerHTML = '';
 }
@@ -375,6 +369,10 @@ function renderizarClassificacao() {
 // Ordem de classificação: AC, depois cotas, depois V. 1ª opção antes da 2ª.
 function simularResultado() {
   const opcoes = estado.opcoes.filter(Boolean);
+  if (!opcoes.length) {
+    $('#resultado').innerHTML = AVISO_SEM_CURSO;
+    return;
+  }
   for (let i = 0; i < opcoes.length; i++) {
     const aprovado = situacaoNaOpcao(opcoes[i]).find((s) => s.dentro);
     if (aprovado) {
@@ -456,8 +454,7 @@ const assistente = new Assistente({
       if (!erros.length) estado.candidato = { cpf: mascararCpf(lerValor('login_cpf', etapa)), enem: CANDIDATO_FICTICIO.enem };
       return erros;
     },
-    cadastro: validarCadastro,
-    cursos: validarCursos
+    cadastro: validarCadastro
   }
 });
 

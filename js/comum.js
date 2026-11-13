@@ -295,7 +295,8 @@ class Assistente {
     if (caixa) caixa.remove();
   }
 
-  // Confere campos obrigatórios visíveis e as regras extras da etapa.
+  // Confere os campos preenchidos e as regras extras da etapa.
+  // Campo vazio não impede de continuar: assim dá para seguir a simulação sem preencher.
   conferir(etapa) {
     this.limparErros(etapa);
     const erros = [];
@@ -307,12 +308,12 @@ class Assistente {
         if (gruposRadio.has(campo.name)) return;
         gruposRadio.add(campo.name);
       }
-      if (campo.checkValidity()) return;
+      if (campo.checkValidity() || campo.validity.valueMissing) return;
       const caixaCampo = campo.closest('.campo, .pergunta, td');
       const rotulo = caixaCampo ? $('label, .rotulo', caixaCampo) : null;
       const nome = campo.dataset.nome ||
         (rotulo ? rotulo.textContent.replace('*', '').trim() : (campo.getAttribute('aria-label') || campo.name));
-      const mensagem = campo.validity.valueMissing ? 'Campo obrigatório.' : campo.validationMessage;
+      const mensagem = campo.validationMessage;
       if (caixaCampo) {
         caixaCampo.classList.add('invalido');
         let msg = $('.msg-campo', caixaCampo);
@@ -341,6 +342,35 @@ class Assistente {
     }
     return true;
   }
+}
+
+// Endereço digitado no formulário, sem pedaços vazios.
+function enderecoDoFormulario() {
+  const cidade = [lerValor('municipio'), lerValor('uf')].filter(Boolean).join('/');
+  const cep = lerValor('cep') ? `CEP ${lerValor('cep')}` : '';
+  return [lerValor('logradouro'), lerValor('numero'), lerValor('complemento'), lerValor('bairro'), cidade, cep]
+    .filter(Boolean).join(', ');
+}
+
+// Resposta de pergunta sim/não para o resumo (vazio se não foi respondida).
+function simNao(valor) {
+  if (valor === 'sim') return 'Sim';
+  if (valor === 'nao') return 'Não';
+  return '';
+}
+
+// E-mail e confirmação preenchidos, mas diferentes.
+function emailsDiferentes(etapa) {
+  const email = lerValor('email', etapa);
+  const confirmacao = lerValor('email_confirmacao', etapa);
+  return Boolean(email && confirmacao && email.toLowerCase() !== confirmacao.toLowerCase());
+}
+
+// Lista das opções de curso, ou um aviso quando a pessoa avançou sem escolher.
+const AVISO_SEM_CURSO = '<div class="caixa alerta"><p>Nenhum curso foi escolhido. Volte à etapa de cursos para escolher pelo menos uma opção.</p></div>';
+
+function opcoesHtml(opcoes, renderizar) {
+  return opcoes.length ? opcoes.map(renderizar).join('') : AVISO_SEM_CURSO;
 }
 
 // Dados do candidato digitados na etapa de dados pessoais.
@@ -444,13 +474,14 @@ class GrupoFamiliar {
     this.atualizarResultado();
   }
 
-  // Regras que o HTML sozinho não confere (CPF conforme a idade).
+  // Regras que o HTML sozinho não confere (CPF digitado conforme a idade).
+  // CPF vazio não impede de continuar.
   erros(dataReferencia) {
     if (!this.cpfAPartirDe) return [];
     return this.membros.flatMap((m, i) => {
       const idade = idadeEm(m.dataNascimento, dataReferencia);
-      return idade !== null && idade >= this.cpfAPartirDe && !cpfValido(m.cpf)
-        ? [`CPF do membro ${i + 1}: obrigatório para quem tem ${this.cpfAPartirDe} anos ou mais.`]
+      return m.cpf && idade !== null && idade >= this.cpfAPartirDe && !cpfValido(m.cpf)
+        ? [`CPF do membro ${i + 1}: informe um CPF válido.`]
         : [];
     });
   }
@@ -475,10 +506,14 @@ class GrupoFamiliar {
 
   // Linhas para a ficha/comprovante.
   resumo() {
-    const linhas = [[`${this.candidato.nome} (candidato/a)`, Formatar.moeda(lerMoeda(this.rendaCandidato))]]
-      .concat(this.membros.map((m) => [this.comParentesco ? `${m.nome} (${m.parentesco})` : m.nome, Formatar.moeda(lerMoeda(m.renda))]));
+    const nomeCandidato = (this.candidato && this.candidato.nome) || 'Você';
+    const linhas = [[`${nomeCandidato} (candidato/a)`, Formatar.moeda(lerMoeda(this.rendaCandidato))]]
+      .concat(this.membros.map((m, i) => {
+        const nome = m.nome || `Membro ${i + 1}`;
+        return [this.comParentesco && m.parentesco ? `${nome} (${m.parentesco})` : nome, Formatar.moeda(lerMoeda(m.renda))];
+      }));
     const t = this.totais();
-    linhas.push(['Renda per capita', `${Formatar.moeda(t.perCapita)} (${t.pessoas} pessoas)`]);
+    linhas.push(['Renda per capita', `${Formatar.moeda(t.perCapita)} (${t.pessoas} ${t.pessoas === 1 ? 'pessoa' : 'pessoas'})`]);
     return linhas;
   }
 }
@@ -517,6 +552,6 @@ document.addEventListener('click', (e) => {
 /* ---------- Validação do CPF digitado no login simulado ---------- */
 function validarLoginCpf(etapa) {
   const cpf = lerValor('login_cpf', etapa);
-  if (!cpf) return []; // campo vazio já é avisado como obrigatório
+  if (!cpf) return []; // campo vazio não impede de continuar
   return cpfValido(cpf) ? [] : ['CPF: informe um CPF válido (use o botão "Gerar CPF fictício").'];
 }

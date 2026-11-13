@@ -30,6 +30,9 @@ python -m http.server 8080
 
 e acesse `http://localhost:8080`.
 
+Nenhum campo impede de avançar: dá para seguir todas as etapas sem preencher nada. Só dado
+digitado errado (CPF inválido, e-mails diferentes) mostra aviso.
+
 ### Painel do apresentador
 
 No topo de cada simulador:

@@ -138,11 +138,8 @@ function entrarDados(etapa) {
 
 function validarDados(etapa) {
   const erros = [];
-  if (lerValor('email', etapa).toLowerCase() !== lerValor('email_confirmacao', etapa).toLowerCase()) {
+  if (emailsDiferentes(etapa)) {
     erros.push('Confirme o e-mail: os dois e-mails precisam ser iguais.');
-  }
-  if (!lerValor('celular', etapa) && !lerValor('telefone', etapa)) {
-    erros.push('Telefone: informe um telefone fixo ou celular.');
   }
   return erros;
 }
@@ -182,7 +179,8 @@ function validarEscolaridade() {
       erros.push('A escola escolhida é privada, mas a isenção informada é de concluinte da rede pública.');
     }
   }
-  if (situacao === 'nao_cursando' && lerValor('certificacao') === 'sim' && idadeNaPrimeiraProva() < 18) {
+  const idade = idadeNaPrimeiraProva();
+  if (situacao === 'nao_cursando' && lerValor('certificacao') === 'sim' && idade !== null && idade < 18) {
     erros.push('Certificação: é preciso ter 18 anos completos até o primeiro dia de prova.');
   }
   return erros;
@@ -195,14 +193,6 @@ function caixasHtml(nome, itens) {
 
 function marcados(nome) {
   return $$(`[name="${nome}"]:checked`).map((c) => c.value);
-}
-
-function validarAtendimento() {
-  if (lerValor('precisa_atendimento') !== 'sim') return [];
-  const erros = [];
-  if (!marcados('condicao').length) erros.push('Condição: marque pelo menos uma condição.');
-  if (!marcados('recurso').length) erros.push('Recursos de acessibilidade: marque pelo menos um recurso.');
-  return erros;
 }
 
 /* ---------- Questionário ---------- */
@@ -219,8 +209,15 @@ function renderizarQuestionario() {
 /* ---------- Conferência e comprovante ---------- */
 function textoEscolaridade() {
   const situacao = lerValor('situacao_em');
-  if (situacao === 'concluido') return `${TEXTO_SITUACAO.concluido} em ${lerValor('ano_conclusao')} (escola ${lerValor('tipo_escola').toLowerCase()})`;
-  if (situacao === 'concluirei_2026') return `${TEXTO_SITUACAO.concluirei_2026} · ${lerValor('escola')} (${lerValor('escola_municipio')}/RS) · ${lerValor('tipo_ensino')}`;
+  if (situacao === 'concluido') {
+    const ano = lerValor('ano_conclusao');
+    const tipo = lerValor('tipo_escola');
+    return [TEXTO_SITUACAO.concluido, ano && `em ${ano}`, tipo && `(escola ${tipo.toLowerCase()})`].filter(Boolean).join(' ');
+  }
+  if (situacao === 'concluirei_2026') {
+    const escola = lerValor('escola') && `${lerValor('escola')} (${lerValor('escola_municipio')}/RS)`;
+    return [TEXTO_SITUACAO.concluirei_2026, escola, lerValor('tipo_ensino')].filter(Boolean).join(' · ');
+  }
   if (situacao === 'nao_cursando') {
     return TEXTO_SITUACAO.nao_cursando + (lerValor('certificacao') === 'sim' ? ', com certificação' : ', sem certificação');
   }
@@ -229,14 +226,15 @@ function textoEscolaridade() {
 
 function textoAtendimento() {
   if (lerValor('precisa_atendimento') !== 'sim') return 'Não';
-  const aparelho = lerValor('aparelho_auditivo') && !$('#bloco_aparelho_auditivo').classList.contains('oculto')
-    ? ' · Usa aparelho auditivo ou implante coclear' : '';
-  return `Condição: ${marcados('condicao').join(', ')} · Recursos: ${marcados('recurso').join(', ')}${aparelho}`;
-}
-
-function textoEndereco() {
-  return [lerValor('logradouro'), lerValor('numero'), lerValor('complemento'), lerValor('bairro'),
-    `${lerValor('municipio')}/${lerValor('uf')}`, `CEP ${lerValor('cep')}`].filter(Boolean).join(', ');
+  const condicoes = marcados('condicao');
+  const recursos = marcados('recurso');
+  const aparelho = lerValor('aparelho_auditivo') && !$('#bloco_aparelho_auditivo').classList.contains('oculto');
+  const partes = [
+    condicoes.length && `Condição: ${condicoes.join(', ')}`,
+    recursos.length && `Recursos: ${recursos.join(', ')}`,
+    aparelho && 'Usa aparelho auditivo ou implante coclear'
+  ].filter(Boolean);
+  return partes.length ? partes.join(' · ') : 'Sim';
 }
 
 function paresInscricao() {
@@ -250,7 +248,7 @@ function paresInscricao() {
     ['Tratamento pelo nome social', lerValor('usa_nome_social') ? 'Sim' : 'Não'],
     ['Língua estrangeira', lerValor('lingua')],
     ['Ensino médio', textoEscolaridade()],
-    ['Município de prova', `${lerValor('prova_municipio')}/${lerValor('prova_uf')}`],
+    ['Município de prova', [lerValor('prova_municipio'), lerValor('prova_uf')].filter(Boolean).join('/')],
     ['Isenção da taxa', situacaoIsencao().texto]
   ];
 }
@@ -258,7 +256,7 @@ function paresInscricao() {
 function entrarConferencia() {
   const dadosPessoais = [
     ['Nome da mãe', lerValor('nome_mae')], ['Cor/raça', lerValor('cor_raca')], ['Estado civil', lerValor('estado_civil')],
-    ['Nacionalidade', lerValor('nacionalidade')], ['Endereço', textoEndereco()]
+    ['Nacionalidade', lerValor('nacionalidade')], ['Endereço', enderecoDoFormulario()]
   ];
   const respostas = QUESTIONARIO.map((q, i) => [`${i + 1}. ${q.texto}`, lerValor(q.id)]);
   $('#resumo_conferencia').innerHTML =
@@ -388,8 +386,7 @@ const assistente = new Assistente({
       return erros;
     },
     dados: validarDados,
-    escolaridade: validarEscolaridade,
-    atendimento: validarAtendimento
+    escolaridade: validarEscolaridade
   }
 });
 

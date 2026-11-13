@@ -91,7 +91,7 @@ function validarDados(etapa) {
   const erros = [];
   const melhor = melhorEdicao();
   if (!melhor || melhor.media < 450) erros.push('Enem: requisitos de nota não atendidos.');
-  if (lerValor('email', etapa).toLowerCase() !== lerValor('email_confirmacao', etapa).toLowerCase()) {
+  if (emailsDiferentes(etapa)) {
     erros.push('Confirme o e-mail: os dois e-mails precisam ser iguais.');
   }
   return erros;
@@ -218,10 +218,6 @@ function entrarCursos() {
   renderizarOfertas();
 }
 
-function validarCursos() {
-  return estado.opcoes[0] ? [] : ['1ª opção: escolha pelo menos um curso.'];
-}
-
 /* ---------- Ficha e comprovante ---------- */
 const TEXTO_ENSINO_MEDIO = {
   publica: 'Integralmente em escola da rede pública',
@@ -232,8 +228,7 @@ const TEXTO_ENSINO_MEDIO = {
 };
 
 function paresDados() {
-  const endereco = [lerValor('logradouro'), lerValor('numero'), lerValor('complemento'), lerValor('bairro'),
-    `${lerValor('municipio')}/${lerValor('uf')}`, `CEP ${lerValor('cep')}`].filter(Boolean).join(', ');
+  const endereco = enderecoDoFormulario();
   return [
     ['Nome', lerValor('nome')],
     ['Nome social', lerValor('usa_nome_social') ? lerValor('nome_social') : ''],
@@ -253,8 +248,8 @@ function paresPerfil() {
   const melhor = melhorEdicao();
   return [
     ['Raça/cor', lerValor('raca_cor')],
-    ['Pessoa com deficiência', lerValor('pcd') === 'sim' ? 'Sim' : 'Não'],
-    ['Professor(a) da rede pública', ehProfessor() ? 'Sim' : 'Não'],
+    ['Pessoa com deficiência', simNao(lerValor('pcd'))],
+    ['Professor(a) da rede pública', simNao(lerValor('professor'))],
     ['Ensino médio', TEXTO_ENSINO_MEDIO[lerValor('ensino_medio')]],
     ['Ano de conclusão', lerValor('ano_conclusao')],
     ['Enem considerado', `${melhor.edicao} · média ${Formatar.nota(melhor.media)}`]
@@ -278,7 +273,7 @@ function entrarFicha() {
     '<h3>Dados pessoais</h3>' + listaDefinicaoHtml(paresDados()) +
     '<h3>Perfil e formação escolar</h3>' + listaDefinicaoHtml(paresPerfil()) +
     '<h3>Grupo familiar (renda bruta mensal)</h3>' + listaDefinicaoHtml(grupo.resumo()) +
-    estado.opcoes.filter(Boolean).map(opcaoHtml).join('');
+    opcoesHtml(estado.opcoes.filter(Boolean), opcaoHtml);
 }
 
 function entrarComprovante() {
@@ -290,7 +285,7 @@ function entrarComprovante() {
     </div>
     ${listaDefinicaoHtml(paresDados().filter(([r]) => ['Nome', 'Nome social', 'CPF', 'E-mail'].includes(r)))}
     ${listaDefinicaoHtml([['Renda per capita', Formatar.moeda(grupo.totais().perCapita)]])}
-    ${estado.opcoes.filter(Boolean).map(opcaoHtml).join('')}`;
+    ${opcoesHtml(estado.opcoes.filter(Boolean), opcaoHtml)}`;
   $('#resultado').innerHTML = '';
 }
 
@@ -298,12 +293,16 @@ function entrarComprovante() {
 function simularResultado() {
   const nota = melhorEdicao().media;
   const opcoes = estado.opcoes.filter(Boolean);
+  if (!opcoes.length) {
+    $('#resultado').innerHTML = AVISO_SEM_CURSO;
+    return;
+  }
   for (let i = 0; i < opcoes.length; i++) {
     const op = opcoes[i];
     const corte = op.oferta.prouni.corte[op.bolsa];
     let via = null;
     if (nota >= corte) via = 'ampla concorrência';
-    else if (op.modalidade !== 'ampla' && nota >= corte - DIFERENCA_CORTE_COTAS) via = 'políticas afirmativas (cotas)';
+    else if (op.modalidade && op.modalidade !== 'ampla' && nota >= corte - DIFERENCA_CORTE_COTAS) via = 'políticas afirmativas (cotas)';
     if (via) {
       $('#resultado').innerHTML = `<div class="caixa ok">
         <p><strong>Pré-selecionado(a) na ${i + 1}ª opção:</strong> ${escaparHtml(op.oferta.curso)} · ${escaparHtml(op.oferta.ies)},
@@ -377,8 +376,7 @@ const assistente = new Assistente({
       return erros;
     },
     dados: validarDados,
-    grupo: validarGrupo,
-    cursos: validarCursos
+    grupo: validarGrupo
   }
 });
 
